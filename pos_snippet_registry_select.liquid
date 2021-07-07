@@ -1,0 +1,38 @@
+<style type='text/css'>
+	form { width: 100%; }
+	input { width: 100%; }
+	button { width: 100%; }
+	h2, h1 { text-align: center; }
+	body { font-family: 'Arial'; }
+	.pos-front { max-width: 95%; margin: 0 auto; }
+	input[type='text'] { height: 32px; }
+</style>
+
+
+<div class="pos-front">
+	<h2>Tag Order{% if order %} {{ order.name }}{% endif %} for Registry</h2>
+
+	<p>Below, you can enter in registry names, registrant or coregistrant names, or ID numbers to identify the registry you'd like to tag.</p>
+
+	<input id='search-bar' type='text' name='search'/>
+	<button id='tag-button' class='btn btn-success'>Tag!</button>
+</div>
+
+<script type='text/javascript'>
+	function initializeTagOrder(validFunction) {
+		var listing = {{ registry_listing | json }};
+		var tags = $.map(listing, function (e) { return "#" + e.id + " - " + e.name + (e.registrant ? " - " + e.registrant : "") + (e.coregistrant ? " - " + e.coregistrant : ""); });
+		$('#search-bar').autocomplete({ source: tags });
+		$('#tag-button').click(function() {
+			$(this).prop('disabled', true);
+			var groups = /\#(\d+)/.exec($('#search-bar').val());
+			if (groups && groups.length >= 1) {
+				var id = groups[1];
+				validFunction(id);
+			} else {
+				ShopifyPOS.flashNotice("Please ensure that you've selected a valid registry.");
+				$(this).prop('disabled', false);
+			}
+		});
+	}
+</script>

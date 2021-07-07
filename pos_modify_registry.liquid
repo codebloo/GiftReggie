@@ -1,0 +1,135 @@
+{% include 'pos_header' %}
+
+{% include 'pos_registry_header' %}
+
+<style type='text/css'>
+    .grid-wants, .grid-has {
+        text-align: center;
+        margin-bottom: 6px;
+    }
+    
+
+    .wants-minus-button, .has-minus-button, .wants-plus-button, .has-plus-button {
+        border: 0;
+        background: #EEE;
+        padding: 2px 8px;
+        
+    }
+
+    .wants-minus-button, .has-minus-button {
+        float: left;
+        margin-left: 2px;
+        border-radius: 0 !important;
+    }
+    
+    .wants-plus-button, .has-plus-button {
+        float: right;
+        margin-right: 2px;
+    }
+</style>
+
+<div class="registry-container">
+    <div class="back-button" style='margin-left: 12px;'><a href='/pos/streamlined'>&larr;</a></div>
+    <h1><a href='/pos/modify_registry/{{ registry.id }}'>{{ registry.name | escape_html }}</a></h1>
+    <div class="grid">
+        {% for entry in registry.products %}
+        	<div class="grid-cell" {% if forloop.index0 > 3 %}style='border-top:0;'{% endif %} data-wants="{{ entry.wants }}" data-has="{{ entry.purchased + entry.purchased_modifier }}" data-needed="{{ entry.needs }}" data-product-id="{{ entry.product_id }}" data-variant-id="{{ entry.variant_id }}" data-properties="{{ entry.properties | json }}">
+        		<div class="grid-image" style='background-image:url({{ entry.image }});'></div>
+        		<div class="grid-text">{{ entry.title }}</div>
+                        <div class="grid-wants">
+                            <!-- <button class="wants-minus-button">&minus;</button> -->
+                            <span>Wants x {{ entry.wants }}</span>
+                            <!-- <button class="wants-plus-button">&plus;</button> -->
+                        </div>
+                        <div class="grid-has">
+                            <!-- <button class="has-minus-button">&minus;</button> -->
+                            <span>Has x {{ entry.purchased + entry.purchased_modifier }}</span>
+                            <!-- <button class="has-plus-button">&plus;</button> -->
+                        </div>
+                </div>
+    	{% endfor %}
+    </div>
+</div>
+<div class="cart-flyout">
+    <div class="cart-header">
+        <h4><a href='/pos/view_registry/{{ registry.id }}'>Click to Shop from Registry</a></h4>
+        <h2>Global Cart</h2>
+        <form id='cart-add-form' method="post">
+            <input id='cart-input' type='hidden' name='cart'/>
+            <input type='hidden' name='action' value='add'/>
+            <button disabled class='btn btn-success' id='add-cart-to-registry'>Add Cart to Registry</button>
+        </form>
+    </div>
+    <div class="cart-list">
+        
+    </div>
+</div>
+
+
+<script type='text/javascript'>
+    function modifyQuantity(type, amount) {
+        var button = $(this);
+        var cell = $(this).parents(".grid-cell");
+        var productId = cell.attr('data-product-id');
+        var variantId = cell.attr('data-variant-id');
+        var quantity = parseInt(cell.attr('data-wants'));
+        var purchased = parseInt(cell.attr('data-has'));
+        if (type == 'quantity') {
+            quantity += amount;
+        } else {
+            purchased += amount;
+        }
+        $('.grid-cell button').prop('disabled', true);
+        var jsonData = JSON.stringify({ products: [{ id: productId, variants: [{ id: variantId, quantity: quantity, purchased: purchased }] }] });
+        var v_url = '/api/0/registries/{{ registry.id }}/products' 
+        v_url += (window.sessionToken) ? '?shopify_jwt=' + window.sessionToken : null ;
+        $.ajax({ url: v_url, dataType: 'json', type: "PUT", contentType: 'application/json', data: jsonData }).done(function() {
+            ShopifyPOS.flashNotice("Successfully modified registry.");
+            
+            cell.attr('data-wants', quantity);
+            cell.attr('data-has', purchased);
+            cell.find(".grid-wants span").text("Wants x " + quantity);
+            cell.find(".grid-has span").text("Has x " + purchased);
+        }).fail(function(xhr) {
+            try {
+                ShopifyPOS.flashError("Failed to modify registry." + xhr.responseText);
+                $('.cart-list').text(xhr.responseText);
+                //var json = JSON.parse(xhr.responseText);
+            }
+            catch (e) {
+                ShopifyPOS.flashError("Failed to modify registry.");
+            }
+        }).always(function() {
+            $('.grid-cell button').prop('disabled', false);
+        });
+    }
+    
+    $('.wants-minus-button').click(function() { modifyQuantity.call(this, 'quantity', -1); });
+    $('.wants-plus-button').click(function() { modifyQuantity.call(this, 'quantity', 1); });
+    
+    $('.has-minus-button').click(function() { modifyQuantity.call(this, 'purchased', -1); });
+    $('.has-plus-button').click(function() { modifyQuantity.call(this, 'purchased', 1); });
+        
+    ShopifyPOS.fetchCart({
+        success: function(cart) {
+            refreshCartList(cart);
+            $('#cart-input').val(JSON.stringify(cart));
+            if (cart && cart.line_items && cart.line_items.length > 0) {
+                $('#add-cart-to-registry').prop('disabled', false);
+                var cartClearDone = false;
+                $('#add-cart-to-registry').click(function() {
+                    cart.clear({ success: function() {
+                            clearCartDone = true;
+                            $('#cart-add-form').submit();
+                    } });
+                });
+            }
+        },
+        error: function(errors) {
+            ShopifyPOS.flashError("Failed to retrieve cart.")
+        }
+    });
+</script>
+
+
+{% include 'pos_footer' %}

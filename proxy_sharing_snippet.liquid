@@ -1,0 +1,90 @@
+<ul class="giftreggie-share-buttons">
+	<li class="giftreggie-share-email">{{ 'gift-reggie.terms.email' | t }}</li>
+	<li class="giftreggie-share-facebook">Facebook</li>
+	<li class="giftreggie-share-twitter">Twitter</li>
+	<li class="giftreggie-share-linkedin">LinkedIn</li>
+	<!-- <li class="giftreggie-share-instagram">Instragram</li> -->
+</ul>
+{% if can_share_email %}
+<div class="giftreggie-share-email-details" style="display:none;">
+	<form method="post">
+		<div class="giftreggie-share-email-remaining">{{ share_count }}/{{ share_maximum }} Shares Used</div>
+		<textarea class="giftreggie-share-email-details-to" placeholder="{{ 'gift-reggie.sharing.email_list' | t }}" name='to'></textarea>
+		<input class="giftreggie-share-email-details-subject" type='text' placeholder="Subject" name='subject' value="{{ default_email_share_subject | escape_html }}"/>
+		<textarea class="giftreggie-share-email-details-body" name='body' placeholder="Body">{{ default_email_share_body | escape_html }}</textarea>
+		<button name='action' value='share'>{{ 'gift-reggie.sharing.share_email' | t }}</button>
+	</form>
+</div>
+{% endif %}
+
+{% capture wishlist_name %}{{ owner_first_name | escape_html }} {{ owner_last_name | escape_html }}{% endcapture %}
+<div style="display:none;" id="share-title">{% if is_registry %}{{ title | escape_html }}{% else %}{{ 'gift-reggie.wishlist.title' | t: name: wishlist_name }}{% endif %}</div>
+<div style="display:none;" id="share-description">{% if is_registry %}{{ description | escape_html }}{% endif %}</div>
+<div style="display:none;" id="share-body">{{ rendered_email_share_body | escape_html }}</div>
+
+<script type='text/javascript'>
+
+
+
+	window.jqReady.push(function(jQuery) {
+		(function($) {		
+			var title = $('#share-title').text();
+			var description = $('#share-description').text(); 
+			
+			var image = '';
+			{% if is_registry %}
+				var url = 'https://{{ shop_url }}{{ proxy_url }}/registry/{{ id }}';
+				{% if image %}
+					image = '{{ image }}';
+				{% endif %}
+			{% endif %}
+			{% if is_wishlist %}
+				var url = 'https://{{ shop_url }}{{ proxy_url }}/wishlist/{{ id }}';
+			{% endif %}
+			
+			$('.giftreggie-share-email-details button').click(function() {
+				
+			});
+			
+			$('.giftreggie-share-email').click(function() {
+				{% if can_share_email %}
+					$('.giftreggie-share-email-details').slideDown();
+				{% else %}
+					window.location = 'mailto:?body=' + encodeURIComponent($('#share-body').text());
+				{% endif %}
+				return false;
+			});
+			$('.giftreggie-share-facebook').click(function() {
+				if (typeof(FB) === "undefined" || !window.fbAsyncInit || !window.fbAsyncInit.hasRun) {
+					window.open(
+						'http://www.facebook.com/sharer.php?kid_directed_site=0&sdk=joey&u=' + encodeURIComponent(url) + '&ref=plugin&src=share_button',
+						'facebook-share-dialog', 
+						'width=626,height=436'
+					); 
+				} else {
+					FB.ui({ method: 'share', href: url });
+				}
+				return false;
+			});
+			$('.giftreggie-share-twitter').click(function() {
+				window.open(
+				      'https://twitter.com/intent/tweet?original_referer=' + encodeURIComponent('{{ shop_url | escape_js }}') + '&text=' + encodeURIComponent(title) + '&tw_p=tweetbutton&url=' + encodeURIComponent(url),
+				      'twitter-share-dialog',
+				      'width=626,height=436'
+				); 
+				return false;
+			});
+			$('.giftreggie-share-linkedin').click(function() {
+				window.open(
+					'http://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(url) + '&title=' + encodeURIComponent(title) + '&summary=' + encodeURIComponent(description) + '&source=' + encodeURIComponent('{{ shop_url | escape_js }}'),
+					'linkedin-share-dialog',
+					'width=620,height=500'
+				);
+				return false;
+			});
+			$('.giftreggie-share-instragram').click(function() {
+				return false;
+			});
+		})(jQuery);
+	});
+</script>

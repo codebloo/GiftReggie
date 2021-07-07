@@ -1,0 +1,154 @@
+{% include 'proxy_header' %}
+<style type='text/css'>
+	.giftreggie-front .giftreggie-create-buttons {
+		text-align: center;
+		max-width: 100%;
+	}
+</style>
+<script type='text/javascript' src="{{ external_hostline }}/{{ js_src }}/jdate.js"></script>
+<div class="giftreggie-front giftreggie-create giftreggie-theme-{{ theme.name | handleize }}">
+	{% if user %}
+		<div class="giftreggie-header">
+        <div class="container">
+            <div class="row">
+              <div class="col-12">
+			<h3 class="h1">{{ 'gift-reggie.create-registry.title' | t }}</h3>
+			<p class="body1">{{ 'gift-reggie.create-registry.description' | t }}</p>
+			</div>
+			</div>
+			</div>
+		</div>
+		<div class="giftreggie-body">
+	        <div class="container">
+	            <div class="row">
+	              <div class="col-12">
+			<p><a href='{{ proxy_url }}/manage'>{{ 'gift-reggie.create-registry.already_have' | t }}</a></p>
+			<form action="?" id="giftreggie-create-form" method="post" enctype="multipart/form-data">
+				{% include 'proxy_registry_info' %}
+				{% if recaptcha_verification %}
+				<div class="registry-profile-block registry-captcha">
+					<span>
+						<h4 class="h1">{{ 'gift-reggie.create-registry.captcha.title' | t }}</h4>
+						<p class="body1">{{ 'gift-reggie.create-registry.captcha.description' | t }}</p>
+						<p> <a id="registry-refresh-captcha" href='#' class="body1">{{ 'gift-reggie.create-registry.captcha.refresh' | t }}</a></p>
+						<p><img id="registry-captcha" src=''/></p>
+						<input id='registry-captcha-id' type='hidden' name='captcha_id' value=''>
+						<script type='text/javascript'>
+							window.jqReady.push(function(jQuery) {
+								(function( $ ) {
+									function refreshCaptcha(id) {
+										if (!id || id == "" || id == 0)
+											id = Math.floor(Math.random()*100000000000);
+										$('#registry-captcha').attr('src', '');
+										$('#registry-captcha').attr('src', '{{ proxy_url }}/serve_captcha?captcha_id=' + encodeURIComponent(id));
+										$('#registry-captcha-id').val(id);
+									}
+									$('#registry-refresh-captcha').click(function() {
+										refreshCaptcha();
+										return false;
+									});
+									refreshCaptcha("{{ sid }}");
+								})(jQuery);
+							});
+						</script>
+						<p><input type='text' name='captcha' placeholder='{{ 'gift-reggie.create-registry.captcha.please-enter' | t }}'/></p>
+					</span>
+				</div>
+				{% endif %}				
+				<p class="giftreggie-create-buttons">
+				    	<input type='submit' value='{{ 'gift-reggie.create-registry.create_registry' | t }}' class="button cta"/>
+					<input id="discard-changes" type='button' value='{{ 'gift-reggie.discard_changes' | t }}'>
+				
+				</p>
+			</form>
+			</div>
+			</div>
+			</div>
+		</div>
+		<div class="giftreggie-footer">&nbsp;</div>
+		<script type='text/javascript'>
+			window.jqReady.push(function(jQuery) {
+				(function( $ ) {
+					$('input[name="registry-password"]').attr('placeholder', '');
+					
+					$('#discard-changes').click(function() {
+            function getURL() {
+              var vars = getUrlVars();
+              var url = "{{ proxy_url }}";
+              if (vars['sid'])
+                  url += "?sid=" + encodeURIComponent(vars['sid']);
+              if (vars['lang'])
+                  url += (url.indexOf("?") ? "&" : "?") + "lang=" + encodeURIComponent(vars['lang'])
+              return url;
+            }
+						window.location.href = getURL();
+						return false;
+					});
+					
+					function displayError(message) { return displayModal(message).done(function() { $("#giftreggie-create-form input[type='submit']").removeAttr('disabled'); }); }
+					
+					$('#giftreggie-create-form').submit(function() {
+						$(this).find("input[type='submit']").attr('disabled', 'disabled');
+						var mappings = {
+							'registry-title': "{{ 'gift-reggie.create-registry.errors.registry-title' | t }}",
+							'registrant-first': "{{ 'gift-reggie.create-registry.errors.registrant-first' | t }}",
+							'registrant-last': "{{ 'gift-reggie.create-registry.errors.registrant-last' | t }}",
+							'event-date': "{{ 'gift-reggie.create-registry.errors.event-date' | t | escape }}",
+							'contact-address': "{{ 'gift-reggie.create-registry.errors.contact-address' | t }}",
+							'contact-city': "{{ 'gift-reggie.create-registry.errors.contact-city' | t }}",
+							'contact-country': "{{ 'gift-reggie.create-registry.errors.contact-country' | t }}",
+							'contact-postal': "{{ 'gift-reggie.create-registry.errors.contact-postal' | t }}"
+						};
+						for (var i in mappings) {
+							if (mappings.hasOwnProperty(i)) {
+								if ($(this).find("input[name='" + i + "']").val() == '' || $(this).find("textarea[name='" + i + "']").val() == '') {
+									displayError(mappings[i]);
+									return false;
+								}
+							}
+						}
+						
+						if( $('input[name="registry-image"]').val() != "" && !$('input[name="registry-image"]').val().match(/\.(jpg|jpeg|gif|png|bmp|svg|apng)$/) ) {
+							displayError("{{ 'gift-reggie.create-registry.errors.image-type' | t }}");
+							return false;
+						}
+						
+						var inputDate = $('input[name="event-date"]').val();
+						var parsedDate;
+						try {
+							parsedDate = jdate.strptime(inputDate, "{{ datetime_format_input }}");
+							{% if datetime_format_input contains "%Y" %}
+								// Because people love to ignore instructions.
+								if (!parsedDate)
+									parsedDate = jdate.strptime(inputDate, "{{ datetime_format_input | replace: "%Y", "%y" }}");
+							{% endif %}
+						}
+						catch (e) {
+							
+						}
+						
+						
+						if (!parsedDate) {
+							displayError("{{ 'gift-reggie.create-registry.errors.event-date-format' | t }}: {{ input_format }}");
+							return false;
+						}
+						if (parsedDate <= new Date() || parsedDate.getYear() >= 2100) {
+							displayError("{{ 'gift-reggie.create-registry.errors.event-date-valid' | t }}");
+							return false;
+						}
+						return true;
+					});
+				})(jQuery);
+			});
+		</script>
+	{% else %}
+		{% if customer %}
+			{{ 'gift-reggie.please_wait_redirect' | t }}
+		{% else %}
+			{% if shop.customer_accounts_enabled %}
+				<div style='width: 100%; margin: 0 auto;'><a href='{{ proxy_url }}/signup' class="body1">{{ 'gift-reggie.not_logged' | t }}</a></div>
+			{% endif %}
+		{% endif %}
+	{% endif %}
+</div>
+{% include 'proxy_footer' %}

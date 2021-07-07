@@ -1,0 +1,75 @@
+{% if customer %}
+	<script type='text/javascript'>
+		{% if (user != null) and (user.shopify_id != customer.id) %}
+			window.location = window.location.href.replace(/sid=[^&]+/, 'rsid=1');
+		{% endif %}
+	
+	
+		var sessionLogin;
+		window.jqReady.push(function(jQuery) {
+			var vars = getUrlVars();
+			var hash = { };
+			if (vars['lang'])
+				hash['lang'] = vars['lang'];
+			(function( $ ) {
+				sessionLogin = function(sharedSecret) {
+					var sessionId = getSessionId(userSessionCookieName);
+					if (!sessionId || /rsid=/.test(window.location.href)) {
+						clearSessionId(userSessionCookieName);
+						var sessionRequest = {url: "{{ proxy_url }}/session", dataType: 'json'};
+						signOAuth(sessionRequest, "{{ customer.email }}", sharedSecret);
+						$.ajax(sessionRequest).done(function(data) {
+							sessionId = data.sid;
+							setSessionId(userSessionCookieName, sessionId);
+							hash['sid'] = sessionId;
+							var url = rewriteUrl(window.location.href, hash);
+							window.location = url;
+						});
+					}
+				}
+				{% if customer.metafields[shop_namespace]['shared-secret'] %}
+					sessionLogin("{{ customer.metafields[shop_namespace]['shared-secret'] }}");
+				{% else %}
+					$.ajax({ url: '{{ proxy_url }}/shared_secret/{{ customer.id }}', type: 'POST', dataType: 'html' }).done(function(html) {
+						var groups = /<div id="customer-shared-secret">(\w+)<\/div>/.exec(html);
+						if (groups && groups.length > 1) 
+							sessionLogin(groups[1]);
+						else
+							window.location.reload();
+					});
+				{% endif %}
+
+				$(document).ready(function() {
+					var sessionId = getSessionId(userSessionCookieName);
+					var hash = { };
+					if (vars['lang'])
+						hash['lang'] = vars['lang'];
+					if (sessionId) {
+						hash['sid'] = sessionId;
+						if (/sid=/.test(window.location.search))
+							rewriteUrls(hash, new RegExp("{{ proxy_url }}"));
+						else
+							window.location = rewriteUrl(window.location.href, sessionId);
+					} else {
+						if (/sid=/.test(window.location.search))
+							rewriteUrls(hash, new RegExp("{{ proxy_url }}"));
+					}
+				});
+			})(jQuery);
+		});
+	</script>
+{% else %}
+	<script type='text/javascript'>
+		window.jqReady.push(function(jQuery) {
+			var vars = getUrlVars();
+			clearSessionId(userSessionCookieName);
+			if (vars['sid']) {
+				delete vars['sid'];
+				window.location = window.location.pathname + encodeUrlVars(vars);
+			}
+			if (vars['lang'])
+				rewriteUrls({ lang: vars['lang'] }, new RegExp("{{ proxy_url }}"));
+		});
+	</script>
+{% endif %}
+

@@ -1,0 +1,154 @@
+
+<style type='text/css'>
+
+    h1 {
+        display: inline-block;
+    }
+
+    .grid-cell:first-child {
+        border-left: 1px solid #AAA;
+    }
+
+	.grid-cell {
+	    margin: 0;
+		width: 165px;
+		
+		border: 1px solid #AAA;
+		border-left: 0;
+		display: block;
+		float: left;
+		vertical-align: top;
+	}
+	
+	.grid-image {
+	    height: 128px;
+	    width: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+	}
+	
+	.grid-text {
+	    height: 32px;
+	    width: 80%;
+	    margin: 0 auto;
+	    text-align: center;
+	    font-size: 12px;
+	    line-height: 12px;
+	}
+	
+	.registry-container {
+	    display: inline-block;
+	    border-right: 1px solid #AAA;
+	    height: 100%;
+	    width: 65%;
+	    vertical-align: top;
+	}
+	
+	.cart-flyout {
+	    display: inline-block;
+	    width: 34%;
+	    vertical-align: top;
+	    height: 100%;
+	    text-align: center;
+	}
+	
+	.cart-header {
+	    display: inline-block;
+	    width: 100%;
+	    border-bottom: 1px solid #AAA;
+	}
+	
+	.cart-list .cart-item {
+	    border-bottom: 1px solid #AAA;
+	    height: 64px;
+	    text-align: left;
+	}
+	
+	.cart-list .cart-item > * {
+	    display: inline-block;
+	    vertical-align: middle;
+	}
+	
+	.cart-list .cart-item .cart-item-image {
+	    width: 64px;
+	    max-width: 64px;
+	    height: 64px;
+	    border-right: 1px solid #AAA;
+            background-size: contain;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+	} 
+	
+	.cart-list .cart-item .cart-item-text {
+	    margin-left: 8px;
+	    width: 256px;
+	}
+	
+	.cart-list .cart-item .cart-item-quantity {
+	    font-weight: bold;
+	}
+	
+	.grid-needs, .grid-price {
+	    text-align: center;
+	}
+	
+	.back-button {
+	    display: inline-block;
+	    font-size: 32px;
+	    margin-left: 2px;
+	    margin-right: 32px;
+	}
+</style>
+
+<script type='text/javascript'>
+
+    var imageCache = {};
+    {% for entry in registry.products %}
+        imageCache[{{ entry.variant_id }}] = '{{ entry.image }}';
+    {% endfor %}
+    
+    function getImage(variantId) {
+        var deferred = $.Deferred();
+        if (!(variantId in imageCache)) {
+            $.ajax({ url: '/api/0/product/' + variantId, dataType: 'json' }).done(function(data) {
+                deferred.resolve(data.product.image);
+            }).fail(function(xhr) {
+                deferred.reject(xhr);
+            });
+        } else {
+            deferred.resolve(imageCache[variantId]);
+        }
+        return deferred;
+    }
+
+    function addCartList(item) {
+        var cartItem = $('<div class="cart-item"><div class="cart-item-image"></div><div class="cart-item-text"></div><div class="cart-item-quantity"></div></div>');
+        cartItem.find('.cart-item-text').text(item.title);
+        cartItem.find('.cart-item-quantity').text("x " + item.quantity);
+        getImage(item.variant_id).done(function(image) {
+            cartItem.find(".cart-item-image").css('background-image', 'url("' + image + '")');
+        });
+        $('.cart-list').append(cartItem);
+    }
+
+
+    var globalCart;
+
+
+// refreshes cart listing; if registryId is present, we filter out all items that aren't tagged with it. If empty, we show all products.
+    function refreshCartList(cart, registryId) {
+        globalCart = cart;
+        $('.cart-list').empty();
+        if (cart.line_items && cart.line_items.length > 0) {
+            for (var i = 0; i < cart.line_items.length; ++i) {
+                    if (!registryId || (cart.line_items[i].properties && cart.line_items[i].properties.length > 0 && $.grep(cart.line_items[i].properties, function (e) { return e.name == 'registry_id' && e.value == registryId; }).length > 0)) {
+                        addCartList(cart.line_items[i])
+                    }
+            }
+        } else {
+            $('.cart-list').html("<p>Your " + (registryId ? "registry's" : "")  + " cart is currently empty.</p>");
+        }
+    }
+    
+</script>

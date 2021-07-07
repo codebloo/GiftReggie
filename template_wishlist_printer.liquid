@@ -1,0 +1,40 @@
+<html>
+<head>
+	<title>{{ name }}</title>
+	<script type='text/javascript' src="{{ js_catalyst_src }}/jquery-1.9.1.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{ css_catalyst_src }}/jquery-ui.css" />
+	<link rel="stylesheet" type="text/css" href="{{ css_catalyst_src }}/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="{{ css_catalyst_src }}/bootstrap-responsive.css" />
+	<link rel="stylesheet" type="text/css" href="{{ css_catalyst_src }}/css_overrides.css" />
+	<link rel="stylesheet" type="text/css" href="{{ css_catalyst_src }}/catalyst-style.css" />
+	<link rel="stylesheet" type="text/css" href="{{ css_catalyst_src }}/chosen.min.css" />
+</head>
+<style>
+	table.table tr td, table.table tr th { vertical-align: middle; text-align: center; }
+	table { max-width: 768px; margin: 0 auto; }
+	table img { max-width: 64px; }
+	h1, h2, h3, h4 { text-align: center; } 
+	
+	table.information tr td {
+		text-align:left;
+		vertical-align: top;
+	}
+</style>
+<h1>{{ name | escape_html }}</h1>
+<h4>{{ email | escape_html }}</h4>
+<h4>Printed on: {{ now }}</h4>
+<table class="table table-striped items">
+	<tr><th>IMAGE</th><th>TITLE</th><th>PRICE</th></tr>
+	{% for item in items %}
+		<tr>
+			<td><img width=64 src='{{ item.image }}'/></td>
+			<td>{{ item.title | escape_html }}</td>
+			<td><span class='money'>{{ item.price | money }}</span></td>
+		</tr>
+	{% endfor %}
+</table>
+<script type='text/javascript'>
+	$(window).load(function() { window.print(); });
+</script>
+</body>
+</html>

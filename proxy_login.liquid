@@ -1,0 +1,22 @@
+{% include 'proxy_header' %}
+<p>Please wait while you are redirected...</p>
+<script type='text/javascript'>
+    window.jqReady.push(function(jQuery) {
+        var vars = getUrlVars();
+        function getURL() {
+            if (vars['type'] == 'wishlist') {
+                var url = "{{ proxy_url }}/wishlist";
+                if (vars['id'])
+                    url += "?id=" + vars['id'];
+                if (vars['lang'])
+                    url += (url.indexOf("?") ? "&" : "?") + "lang=" + encodeURIComponent(vars['lang'])
+                return url;
+            }
+            else {
+                return "{{ proxy_url }}/manage" + (vars['lang'] ? "?lang=" + encodeURIComponent(vars['lang']) : "");
+            }
+        }
+        window.location = "{% if language %}/{{ language }}{% endif %}/account/login?checkout_url=" + encodeURIComponent(getURL());
+    })(jQuery);
+</script>
+{% include 'proxy_footer' %}

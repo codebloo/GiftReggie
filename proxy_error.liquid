@@ -1,0 +1,10 @@
+{% include 'proxy_header' %}
+
+<div class="giftreggie-front giftreggie-error giftreggie-theme-{{ theme.name | handleize }}">
+	<h1>{{ error.code }} Error</h2>
+	<h2>{{ error.title | escape_html }}</h2>
+
+	<p>{{ error.description | escape_html }}</p>
+</div>
+
+{% include 'proxy_footer' %}

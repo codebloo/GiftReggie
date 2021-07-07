@@ -1,0 +1,220 @@
+{% unless is_admin %}
+	<script type='text/javascript'>	
+		window.jqReady.push(function(jQuery) {
+			(function( $ ) {
+				var getVariantID = function(row) {
+					return row.find("input[name='variant-id']").val();
+				};
+				
+				var getVariantNeededQuantity = function(row) {
+					return parseInt(row.find('.giftreggie-needs-quantity').text());
+				};
+				
+				var getVariantName = function(row) {
+					return row.find(".giftreggie-item-name").text();
+				}
+				
+				var getVariantQuantity = function(row) {
+					var quantity = parseInt(row.find('.registry-variant-quantity').val());
+					if (isNaN(quantity))
+						return 0;
+					return quantity;
+				};
+				var setVariantQuantity = function(row, quantity) {
+					row.find('.registry-variant-quantity').val(quantity)
+				};
+				
+				var getPropertyHash = function(row) {
+					var properties = {};
+					row.find(".property").each(function() {
+						properties[$.trim($(this).find(".property-name").text()).replace(/:$/, "")] = $.trim($(this).find(".property-value").text());
+					});
+					return properties;
+				};
+				
+				var getDerivedID = function(item) {
+					// It's either a selector, or a cart item.
+					var variantId;
+					var properties = {};
+					if (item.jquery) {
+						variantId = getVariantID(item);
+						properties = getPropertyHash(item);
+					} else {
+						variantId = item.variant_id;
+						properties = item.properties ? item.properties : {};
+					}
+					
+					var keys = Object.keys(properties).sort();
+					var string = variantId;
+					for (var i = 0; i < keys.length; ++i)
+						string += "&" + encodeURIComponent(keys[i]) + "=" + encodeURIComponent(properties[keys[i]]);
+					return string;
+				};
+				var getRowFromID = function(id) {
+					var variantId = (""+id).split("&")[0];
+					var row;
+					$('.registry-variant:visible').each(function() {
+						if ($(this).find("input[name='variant-id']").val() == variantId && getDerivedID($(this)) == id) {
+							row = $(this);
+						}
+					});
+					return row;
+				};
+				
+				var savedCart = {% if cart %}{{ cart | json }}{% else %}{}{% endif %};
+				var itemHash = { };
+				for (var i = 0; i < savedCart.items.length; ++i) {
+					var id = getDerivedID(savedCart.items[i]);
+					itemHash[id] = { line: (i+1), quantity: savedCart.items[i].quantity };
+					var row = getRowFromID(id);
+					if (row)
+						row.find(".registry-variant-quantity").val(savedCart.items[i].quantity);
+				}
+
+				var checked = false;
+				function clickedCheckout() { 
+					if (!checked) {
+						updateRegistryCart();
+						checked = true;
+						$('#giftreggie-checkout').click();
+						return false;
+					}
+					return true;
+				}
+				
+				$('#giftreggie-checkout').click(clickedCheckout);
+				
+				updateRegistryCart = function() {
+					$('.registry-variant-quantity, .action-buttons input').attr('disabled', 'disabled');
+					var failures = [];
+					
+					var variants = [];
+					$('.registry-variant:visible').each(function() {
+						var id = getDerivedID($(this));				
+						var currentQuantity = itemHash[id] != null ? itemHash[id].quantity : 0;
+						var line = itemHash[id] != null ? itemHash[id].line : null;
+						var desiredQuantity = getVariantQuantity($(this));
+						var neededQuantity = getVariantNeededQuantity($(this));
+						
+						if (currentQuantity != desiredQuantity && desiredQuantity > neededQuantity) {
+							variants.push(getVariantName($(this)));
+						}
+					});
+					
+					var confirmationPhrase = "{{ 'gift-reggie.cart-update.confirmation' | t | escape | replace: "{ items }", "{ items }" }}".replace("{ items }", variants.join(", "));
+					var succesfullyModifiedPhrase = "{{ 'gift-reggie.cart-update.success' | t | escape }}";
+					var errorModifyingPhrase = "{{ 'gift-reggie.cart-update.errors.cart' | t | escape }}";
+					var errorModifyingEndPhrase = "{{ 'gift-reggie.cart-update.errors.cart_end' | t | escape }}";
+					var unknownErrorPhrase = "{{ 'gift-reggie.unknown_error' | t | escape }}";
+					
+					function failFunction(jqXHR) {
+						try {
+							if (jqXHR.status == 422)
+								failures.push(JSON.parse(jqXHR.responseText).description);
+						}
+						catch (e) {
+							failures.push(unknownErrorPhrase);
+						}
+					}
+					var decodeEntities = (function() {
+						// this prevents any overhead from creating the object each time
+						var element = document.createElement('div');
+
+						function decodeHTMLEntities (str) {
+							if(str && typeof str === 'string') {
+								// strip script/html tags
+								str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
+								str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+								element.innerHTML = str;
+								str = element.textContent;
+								element.textContent = '';
+							}
+
+							return str;
+						}
+						return decodeHTMLEntities;
+					})();
+
+					
+					if (variants.length == 0 || confirm(decodeEntities(confirmationPhrase))) {
+						$('.registry-variant:visible').each(function() {
+							var row = $(this);
+							var id = getDerivedID($(this));
+							var variantId = getVariantID($(this));
+							var properties = getPropertyHash($(this));
+							
+							var currentQuantity = itemHash[id] != null ? itemHash[id].quantity : 0;
+							var line = itemHash[id] != null ? itemHash[id].line : null;
+							var desiredQuantity = getVariantQuantity($(this));
+							
+							if (currentQuantity != desiredQuantity) {					
+								function addFunction(line) {
+									var id = getDerivedID(line);
+									itemHash[id] = { line: (i+1), quantity: line.quantity };
+								}
+								
+								function changeFunction(cart) {
+									for (var i = 0; i < cart.items.length; ++i) {
+										var id = getDerivedID(cart.items[i]);
+										itemHash[id] = { line: (i+1), quantity: cart.items[i].quantity };
+									}
+									for (var id in itemHash) {
+										var array = $.grep(cart.items, function(e) { return getDerivedID(e) == id });
+										if (array != null && array.length == 0) {
+											delete itemHash[id];
+										}
+									}
+								}
+								if (currentQuantity == 0) {
+									var addHash = {'id': variantId, 'quantity': desiredQuantity};
+									var addBoldHash = {};
+									if (JSON.stringify(properties) != "{}") {
+										addHash['properties'] = properties;
+									    for (var pr in properties) {
+									        if (pr == "_boldVariantIds") {
+									            addBoldHash = {'id': properties[pr], 'quantity': desiredQuantity};
+									        }
+									    }
+									}
+									$.ajax({url: '{% if testing %}/mock{% endif %}/cart/add.js', type: 'POST', async: false, dataType: 'json', data: addHash }).done(addFunction).fail(function(jqXHR) {
+										setVariantQuantity(row, currentQuantity);
+										failFunction(jqXHR);
+									});
+									if (Object.keys(addBoldHash).length > 0) {
+										$.ajax({url: '{% if testing %}/mock{% endif %}/cart/add.js', type: 'POST', async: false, dataType: 'json', data: addBoldHash }).done(addFunction).fail(function(jqXHR) {
+											setVariantQuantity(row, currentQuantity);
+											failFunction(jqXHR);
+										});
+									}
+								} else {
+									$.ajax({url: '{% if testing %}/mock{% endif %}/cart/change.js', type: 'POST', async: false, dataType: 'json', data: {
+										'line': line, 'quantity': desiredQuantity
+									} }).done(changeFunction).fail(function(jqXHR) {							
+										setVariantQuantity(row, currentQuantity);
+										failFunction(jqXHR);
+									});
+								}
+							}
+						});
+						if ($('textarea[name="note"]').length > 0 && $('textarea[name="note"]').val() != '') {
+							$.ajax({ url: '{% if testing %}/mock{% endif %}/cart/update.js', type: 'POST', async: false, dataType: 'json', data: { note: $('textarea[name="note"]').val() } }).fail(function(jqXHR) {
+								failFunction(jqXHR);
+							});
+						}
+						if (failures.length > 0)
+							$('#status-bar').html("<p>" + errorModifyingPhrase + "</p><ul>" + $.map(failures, function(e) { return "<li>" + e + "</li>"; }).join("") + "</ul><p>" + errorModifyingEndPhrase + "</p>");
+						else
+							$('#status-bar').html("<p>" + succesfullyModifiedPhrase + "</p>");
+						$('#status-bar').fadeIn(400, function() {
+							setTimeout(function() {
+								$('#status-bar').fadeOut();
+							}, 10000);
+						});
+					}
+					$('.registry-variant-quantity, .action-buttons input').removeAttr('disabled');
+				}
+				$('#registry-update-cart').click(function(){ updateRegistryCart(); return false; });
+			})(jQuery);
+		});
+	</script>
+{% endunless %}

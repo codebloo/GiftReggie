@@ -1,0 +1,52 @@
+{% include 'proxy_header' %}
+<style>
+        .giftreggie-landing-overview {
+                max-width: 600px;
+        }
+
+        .giftreggie-landing-row h4 {
+                text-align: left;
+                margin: 0;
+                font-size: 20pt;
+                text-transform: uppercase;
+        }
+
+        .giftreggie-landing a, .giftreggie-landing a:hover {
+                text-decoration: none;
+                color: #000;
+        }
+
+        .giftreggie-landing-row {
+                border-bottom: 1px solid #AAA;
+                margin-top: 24px;
+                padding: 12px;
+        }
+</style>
+<div class="giftreggie-front giftreggie-landing giftreggie-theme-{{ theme.name | handleize }}">
+        <h3>{{ 'gift-reggie.landing.title' | t }}</h3>
+        <div class="giftreggie-landing-overview">
+                <a href='{{ proxy_url }}/find'>
+                        <div class="giftreggie-landing-row">
+                                <h4>{{ 'gift-reggie.terms.find' | t }} &gt;</h4>
+                                <p>{{ 'gift-reggie.landing.find' | t }}</p>
+                        </div>
+                </a>
+                {% if customer_account_can_create %}
+                        <a href='{{ proxy_url }}/{% if customer %}create{% else %}signup{% endif %}'>
+                                <div class="giftreggie-landing-row">
+                                        <h4>{{ 'gift-reggie.terms.create' | t }} &gt;</h4>
+                                        <p>{{ 'gift-reggie.landing.create' | t }}</p>
+                                </div>
+                        </a>
+                {% endif %}
+                {% capture checkout_url %}{{ proxy_url }}/manage?lang={{ language }}{% endcapture %}
+                <a href='{% if customer %}{{ checkout_url }}{% else %}{% if language %}/{{ language }}{% endif %}/account/login?checkout_url={{ checkout_url | url_escape }}{% endif %}'>
+                        <div class="giftreggie-landing-row">
+                                <h4>{{ 'gift-reggie.terms.manage' | t }} &gt;</h4>
+                                <p>{{ 'gift-reggie.landing.manage' | t }}</p>
+                        </div>
+                </a>
+        </div>
+</div>
+{% include 'proxy_footer' %}
+t

@@ -1,0 +1,21 @@
+{% include 'proxy_header' %}
+<div class="giftreggie-front giftreggie-wishlist-entry giftreggie-theme-{{ theme.name | handleize }}">
+	<form method="post">
+		{% if user %}
+			<div style="text-align:center;">
+				<p>{{ 'gift-reggie.wishlist.no_wishlist' | t }}</p>
+				<p><button>{{ 'gift-reggie.wishlist.open' | t }}</button></p>
+			</div>
+		{% else %}
+			{% if customer %}
+				<p>{{ 'gift-reggie.please_wait_redirect' | t }}</p>
+			{% else %}
+        {% capture register_link %}<a href='{{ proxy_url }}/signup?type=wishlist{% if language %}&lang={{ language }}{% endif %}{% if post_id %}&id={{ post_id | escape_html }}{% endif %}'>{{ 'gift-reggie.terms.register' | t | downcase }}</a>{% endcapture %}
+        {% capture checkout_url %}{{ proxy_url }}/wishlist?lang={{ language }}{% if post_id %}&id={{ post_id | escape_html }}{% endif %}{% endcapture %}
+        {% capture login_link %}<a href='{% if language %}/{{ language }}{% endif %}/account/login?checkout_url={{ checkout_url | url_escape }}'>{{ 'gift-reggie.terms.login' | t | downcase }}</a>{% endcapture %}
+				<p>{{ 'gift-reggie.wishlist.not_logged_in' | t: register_link: register_link, login_link: login_link }}</p> 																				
+			{% endif %}
+		{% endif %}
+	</form>
+</div>
+{% include 'proxy_footer' %}

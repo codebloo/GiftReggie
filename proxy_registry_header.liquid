@@ -1,0 +1,106 @@
+{% include 'proxy_header' %}
+
+<div class="giftreggie-front giftreggie-admin giftreggie-registry {% if is_admin %}giftreggie-manager{% else %}giftreggie-guest{% endif %} giftreggie-theme-{{ theme.name | handleize }}">
+	<div class="giftreggie-header">
+	  
+		
+		{% if is_admin %}
+		<div class="registry-header d-none d-lg-block">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+               <ul class="registry-nav">
+             
+              
+               <li class="registry-nav-link">
+                  <a href="{{ proxy_url }}/registry/{{ id }}/profile" class="h4">Dashboard</a>
+                </li>
+              
+               <li class="registry-nav-link">
+                  <a href="{{ proxy_url }}/registry/{{ id }}" class="h4">Manage Registry</a>
+                </li>
+              
+               <li class="registry-nav-link">
+                  <a href="https://everlastly.myshopify.com/collections/all" class="h4">Catalog</a>
+                </li>
+              
+               <li class="registry-nav-link">
+                  <a href="https://everlastly.myshopify.com/collections/norcal-local-goods-starter-collection" class="h4">Quick Picks</a>
+                </li>
+              
+               <li class="registry-nav-link">
+                  <a href="https://everlastly.myshopify.com/pages/checklist" class="h4">Checklist</a>
+                </li>
+              
+               <li class="registry-nav-link">
+                  <a href="{{ proxy_url }}/registry/{{ id }}/share" class="h4">Share Registry</a>
+                </li>
+              {% if owner_can_see_orders %}
+               <li class="registry-nav-link">
+                  <a href="{{ proxy_url }}/registry/{{ id }}/orders" class="h4">Track Gifts</a>
+                </li>
+              {% endif %}
+            </ul>
+             
+           
+  	</div>
+		
+			<script type='text/javascript'>
+				window.jqReady.push(function(jQuery) {
+					(function( $ ) {
+						var longest_link;
+						$('.registry-nav li').each(function() {
+							var location = window.location.hostname + window.location.pathname;
+							var link = $(this).find('a').attr('href')
+							if (location.indexOf(link) != -1 && (!longest_link || longest_link.find("a").attr("href").length < link.length)) {
+								longest_link = $(this);
+							}
+						});
+						longest_link.addClass('active');
+						$('.registry-nav li').click(function() { $('.registry-nav li').removeClass('active'); $(this).addClass('active'); return true; }) 
+					})(jQuery);
+				});
+			</script>
+		{% endif %}
+		{% unless is_admin %}
+			<ul id="giftreggie-client-menu" class="registry-nav">
+				{% if guest_can_message %}<li class="registry-nav-link"><a href='{{ proxy_url }}/registry/{{ id }}/message'>{{ 'gift-reggie.terms.message' | t }}</a></li>{% endif %}
+			</ul>
+		{% endunless %}
+		</div>
+		</div>
+		</div>
+	</div>
+	<div class="giftreggie-body">
+		<div id='giftreggie-alert' class='giftreggie-alert' style='display:none;'></div>
+		<script type='text/javascript'>
+			window.jqReady.push(function(jQuery) {
+				(function( $ ) {
+					GiftReggie.displayMessage = function(type, message) {
+						if (GiftReggie.messageTimeout)
+							clearTimeout(GiftReggie.messageTimeout);
+						$('#giftreggie-alert').text(message);
+						$('#giftreggie-alert').removeClass('giftreggie-success');
+						$('#giftreggie-alert').removeClass('giftreggie-error');
+						$('#giftreggie-alert').addClass('giftreggie-' + type);
+						$('#giftreggie-alert').show();
+						GiftReggie.messageTimeout = setTimeout(function() {
+							$('#giftreggie-alert').fadeOut(200);
+						}, 5000);
+					};
+					GiftReggie.displaySuccess = function(message) {
+						return GiftReggie.displayMessage('success', message);
+					};
+					GiftReggie.displayFailure = function(message) {
+						return GiftReggie.displayMessage('failure', message);
+					};
+					GiftReggie.displayError = function(message) {
+						return GiftReggie.displayMessage('failure', message);
+					};
+						
+					var vars = getUrlVars();
+					if (vars['message'])
+						GiftReggie.displaySuccess(vars['message']);
+				})(jQuery);
+			});
+		</script>

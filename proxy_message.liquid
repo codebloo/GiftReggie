@@ -1,0 +1,99 @@
+{% include 'proxy_registry_header' %}
+
+<div class="giftreggie-messaging">
+
+	<p>{{ 'gift-reggie.message.greeting' | t }}</p>
+
+	<form id='giftreggie-message-form' method="post">
+		<p>
+			<span><label for="giftreggie-message-first-name">{{ 'gift-reggie.terms.first_name' | t }}</label></span>
+			<span><input type='text' name="first-name" id="giftreggie-message-first-name" value="{{ customer.first_name }}" /></span>
+		</p>
+		<p>
+			<span><label for="giftreggie-message-last-name">{{ 'gift-reggie.terms.last_name' | t }}</label></span>
+			<span><input type='text' name="last-name" id="giftreggie-message-last-name" value="{{ customer.last_name }}" /></span>
+		</p>
+		<p>
+			<span><label for="giftreggie-message-email">{{ 'gift-reggie.terms.email' | t }}</label></span>
+			<span><input type='text' name="email" id="giftreggie-message-email" value="{{ customer.email }}" /></span>
+		</p>
+		<p>
+			<span><label for="giftreggie-message-subject">{{ 'gift-reggie.terms.subject' | t }}</label></span>
+			<span><input type='text' name="subject" id="giftreggie-message-subject" value="{{ default_message_subject | escape_html }}" /></span>
+		</p>
+		<p>
+			<span><label for="giftreggie-message-body">{{ 'gift-reggie.terms.body' | t }}</label></span>
+			<span><textarea name="body" id="giftreggie-message-body">{{ default_message_body | escape_html }}</textarea></span>
+		</p>
+		<p>
+			<div class="registry-captcha">
+				<span>
+					<h4>{{ 'gift-reggie.create-registry.captcha.title' | t }}</h4>
+					<p>{{ 'gift-reggie.create-registry.captcha.description' | t }}</p>
+					<p> <a id="registry-refresh-captcha" href='#'>{{ 'gift-reggie.create-registry.captcha.refresh' | t }}</a></p>
+					<p><img id="registry-captcha" src=''/></p>
+					<input id='registry-captcha-id' type='hidden' name='captcha_id' value=''>
+					<script type='text/javascript'>
+						window.jqReady.push(function(jQuery) {
+							(function( $ ) {
+								function refreshCaptcha(id) {
+									if (!id || id == "" || id == 0)
+										id = Math.floor(Math.random()*100000000000);
+									$('#registry-captcha').attr('src', '');
+									$('#registry-captcha').attr('src', '{{ proxy_url }}/serve_captcha?captcha_id=' + encodeURIComponent(id));
+									$('#registry-captcha-id').val(id);
+								}
+								$('#registry-refresh-captcha').click(function() {
+									refreshCaptcha();
+									return false;
+								});
+								refreshCaptcha("{{ sid }}");
+							})(jQuery);
+						});
+					</script>
+					<p><input type='text' id='giftreggie-captcha' name='captcha' placeholder='{{ 'gift-reggie.create-registry.captcha.please-enter' | t }}'/></p>
+				</span>
+			</div>
+		</p>
+		<p>
+			<span><input id="message-button" type='submit' value="{{ 'gift-reggie.message.send' | t }}" ></span>
+		</p>
+	</form>
+	<script type='text/javascript'>
+		window.jqReady.push(function(jQuery) {
+			(function( $ ) {
+				$('#giftreggie-message-form').submit(function() {
+					if ($('#giftreggie-message-body').val() == '') {
+						GiftReggie.displayError("Please enter in a message body.")
+						return false;
+					}
+					if ($('#giftreggie-message-subject').val() == '') {
+						GiftReggie.displayError("Please enter in a subject.")
+						return false;
+					}
+					if ($('#giftreggie-message-first-name').val() == '') {
+						GiftReggie.displayError("Please enter in a first name.")
+						return false;
+					}
+					if ($('#giftreggie-message-last-name').val() == '') {
+						GiftReggie.displayError("Please enter in a last name.")
+						return false;
+					}
+					if ($('#giftreggie-message-email').val() == '') {
+						GiftReggie.displayError("Please enter in an email!")
+						return false;
+					}
+					if ($('#giftreggie-captcha').val() == '') {
+						GiftReggie.displayError("Please enter in a captcha answer.")
+						return false;
+					}
+					return true;
+				});
+			})(jQuery);
+		});
+		
+	</script>
+
+</div>
+
+{% include 'proxy_registry_footer' %}

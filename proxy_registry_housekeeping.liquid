@@ -1,0 +1,55 @@
+<script type='text/javascript'>
+	window.jqReady.push(function(jQuery) {
+		(function( $ ) {
+			if (!getCookie("giftreggie-logged") || JSON.parse(getCookie("giftreggie-logged")).registry_id != {{ id }}) {
+				{% unless is_admin %}
+					{% if registry_first_popup %}
+						$(document).ready(function() { displayModal("{{ registry_first_popup | escape_js | escape_html | newline_to_br }}"); });
+					{% endif %}
+				{% endunless %}
+			}
+			setCookie("giftreggie-logged", '{"admin": {{ is_admin }}, "registry_id": {{ id }}, "registry_title": "{{ escaped_name | escape_html }}", "wishlist_id": null }');
+			{% if registry_shipping %}
+				var address = {{ registry_shipping }};
+				setCookie("giftreggie-address", JSON.stringify(address));
+			{% endif %}
+			var neededAttributes = {};
+			{% unless cart.attributes.registry_id == id %}
+				neededAttributes['attributes[registry_id]'] = "{{ id }}";
+			{% endunless %}
+			{% if is_admin %}
+				{% unless cart.attribute.registry_admin %}
+					neededAttributes['attributes[registry_admin]'] = true;
+				{% endunless %}
+			{% else %}
+				{% if cart.attribute.registry_admin %}
+					neededAttributes['attributes[registry_admin]'] = '';
+				{% endif %}
+			{% endif %}
+			if (Object.keys(neededAttributes).length > 0)
+				$.ajax({ url: '{% if testing %}/mock{% endif %}/cart/update.js', type: "POST", data: neededAttributes });
+				
+		})(jQuery);
+	});
+</script>
+
+
+{% if is_admin %}
+	<script type='text/javascript'>
+	window.jqReady.push(function(jQuery) {
+		jQuery('.giftreggie-edit-description button').click(function() {
+      function getURL() {
+        var vars = getUrlVars();
+        var url = "{{ proxy_url }}/registry/{{ id }}/profile";
+        if (vars['sid'])
+            url += "?sid=" + encodeURIComponent(vars['sid']);
+        if (vars['lang'])
+            url += (url.indexOf("?") ? "&" : "?") + "lang=" + encodeURIComponent(vars['lang'])
+        return url;
+      }
+      window.location.href = getURL();
+			return false;
+		});
+	});
+	</script>
+{% endif %}

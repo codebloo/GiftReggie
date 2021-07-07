@@ -1,0 +1,192 @@
+{% include 'pos_header' %}
+
+<style type='text/css'>
+    #create-form input {
+        padding: 12px;
+        width: 100%;
+    }
+    #create-form select {
+        width: 100%;
+    }
+    
+    #create-form button {
+        width: 100%;
+    }
+</style>
+
+
+
+<div class="container-fluid">
+	<div id='ajax-loader' style='margin-top: 48px; width: 100%; text-align: center;'>
+		<img src='/static/img/catalyst/ajax-loader-large.gif'/>
+	</div>
+	<form id='create-form' style='display: none;' method="post" action='?'>
+		<input type='hidden' id='cart-json' name='cart'>
+		<h2>Create a Registry</h2>
+		<h4>You are creating a registry containing <span id="item-count"></span> product(s).</h4>
+		<div class="row-fluid">
+			<div class="span6">Name</div>
+			<div class="span6"><input type='text' name='name' required/></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">Type</div>
+			<div class="span6"><select name='type'>{% if types.size > 0 %}{% for type in types %}
+				<option>{{ type }}</option>
+			{% endfor %}{% else %}<option>N/A</option>{% endif %}</select></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">Registrant First Name</div>
+			<div class="span6"><input type='text' name='registrant-first' required/></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">Registrant Last Name</div>
+			<div class="span6"><input type='text' name='registrant-last' required/></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">Coregistrant First Name</div>
+			<div class="span6"><input type='text' name='coregistrant-first'/></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">Coregistrant Last Name</div>
+			<div class="span6"><input type='text' name='coregistrant-last'/></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">Event Date</div>
+			<div class="span6"><input type='date' name='event-date' required/></div>
+		</div>
+		<div name='div-address-selector' class="row-fluid"></div>
+		{% for field in ("Email,Address,City,Province,Country,Postal,Phone" | split: ',') %}
+		<div class="row-fluid">
+			<div class="span6">Contact {{ field }}</div>
+			<div class="span6"><input type='{% if field == "Email" %}email{% else %}text{% endif %}' name='contact-{{ field | downcase }}'/></div>
+		</div>
+		{% endfor %}
+		<div class="row-fluid">
+			<div class="span12">
+				<button class='btn btn-success' id=create >Create Registry</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<script type='text/javascript'>
+    
+    function update_address(id){
+	    event.preventDefault();
+        event.stopPropagation();
+        
+        if(id == -1){
+			    document.getElementsByName("contact-address")[0].value = "";
+			    document.getElementsByName("contact-city")[0].value = "";
+			    document.getElementsByName("contact-province")[0].value = "";
+			    document.getElementsByName("contact-country")[0].value = "";
+			    document.getElementsByName("contact-postal")[0].value = "";
+			    document.getElementsByName("registrant-phone")[0].value = "";
+        }
+        if(id > -1){
+            var address = document.GR[id];
+            
+            if(address.hasOwnProperty("address2")){
+                line += " " + address.address2;
+            }
+
+            var line = address.address1;
+            document.getElementsByName("contact-address")[0].value = line;
+		    document.getElementsByName("contact-city")[0].value = address.city;
+		    document.getElementsByName("contact-province")[0].value = address.province;
+		    document.getElementsByName("contact-country")[0].value = address.country;
+		    document.getElementsByName("contact-postal")[0].value = address.zip;
+		    document.getElementsByName("registrant-phone")[0].value = address.phone;
+        }
+    
+    }
+    
+    
+	ShopifyPOS.fetchCart({
+		success: function(cart) {
+			$('#cart-json').val(JSON.stringify(cart));
+			$('#ajax-loader').hide();
+			var clearCartDone = false;
+
+			
+			if (cart.line_items && cart.line_items.length > 0) {
+				$('#create-form').show();
+				$('#item-count').text(cart.line_items.length);
+			} else {
+				ShopifyPOS.flashError("Please add the items you'd like to add to the registry to your cart.");
+				ShopifyPOS.Modal.close();
+			}
+			
+			if(cart.customer){
+
+			    document.getElementsByName("registrant-first")[0].value = cart.customer.first_name;
+			    document.getElementsByName("registrant-last")[0].value = cart.customer.last_name;
+			    document.getElementsByName("contact-email")[0].value = cart.customer.email;
+			     
+			     if(cart.customer.addresses && cart.customer.addresses.length != 0 ){
+   
+                    document.GR = cart.customer.addresses;
+
+                    var address_selector = document.getElementsByName("div-address-selector")[0];
+                    
+                  
+                    var clearbutton = document.createElement("BUTTON");
+                    clearbutton.classList.add("btn","btn-danger");
+                    clearbutton.style.width =  "12%";
+                    clearbutton.style.float = "right";
+                    clearbutton.textContent = "Clear Address";
+                    clearbutton.addEventListener("click", function(){update_address(-1)});
+                    
+                    var span = document.createElement("SPAN")
+                    span.classList.add("span12");
+                    span.appendChild(clearbutton);
+                    address_selector.appendChild(span);
+                    update_address(0);
+                }
+			    
+
+			}
+			
+			$('#create').click(function() {
+			    event.preventDefault();
+                event.stopPropagation();
+                
+				if ($('input[name="name"]').val() == '') {
+					ShopifyPOS.flashError("Please enter in the registry name.");
+					return false;
+				}
+				if ($('input[name="registrant-first"]').val() == '') {
+					ShopifyPOS.flashError("Please enter in the registrant's first name.");
+					return false;
+				}
+				if ($('input[name="registrant-last"]').val() == '') {
+					ShopifyPOS.flashError("Please enter in the registrant's last name.");
+					return false;
+				}
+				if ($('input[name="event-date"]').val() == '') {
+					ShopifyPOS.flashError("Please enter in the event date.");
+					return false;
+				}
+				
+				
+				if (!clearCartDone) {
+					cart.clear({ success: function() {
+						clearCartDone = true;
+						$('#create-form').submit();
+						
+					} });
+					return false;
+				}
+				return true;
+			});
+		}, 
+		error: function(errors) {
+			ShopifyPOS.flashError("Failed to retrieve cart.");
+			ShopifyPOS.Modal.close();
+		}
+	});
+</script>
+
+
+{% include 'pos_footer' %}
+

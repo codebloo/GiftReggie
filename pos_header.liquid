@@ -1,0 +1,104 @@
+<html>
+	<head>	
+		<meta charset="utf-8" /> 
+		{% unless testing %}
+			<script src="https://cdn.shopify.com/s/assets/external/pos_app.js"></script>
+		{% else %}
+			<script type='text/javascript'>
+				function ShopifyPOS() {
+					this.init = function() {
+						
+					};
+					
+					this.fetchCart = function(hash) {
+						$.ajax({ url: '/mock/cart_pos.js', dataType: 'json' }).done(function(cart) {
+							if (hash['success'])
+								hash['success'](cart);
+						}).fail(function() {
+							if (hash['error'])
+								hash['error']();
+						});
+					};
+					
+					this.clear = function(hash) {
+						$.ajax({ url: '/mock/cart/clear.js', dataType: 'json' }).done(function(cart) {
+							if (hash['success'])
+								hash['success'](cart);
+						}).fail(function() {
+							if (hash['error'])
+								hash['error']();
+						});
+					};
+					
+					this.flashError = function(message) {
+						alert(message);
+					};
+					
+					this.Modal = {};
+					
+					this.Modal.close = function() {
+						window.close();
+					};
+				}
+				
+				var ShopifyPOS = new ShopifyPOS();
+			</script>
+		{% endunless %}
+		
+		<script type="text/javascript">
+			ShopifyPOS.init({
+				apiKey: '{{ api_key }}',
+				shopOrigin: 'https://{{ shop.myshopify_domain }}'
+			});
+		</script>
+			
+		<link rel="stylesheet" type="text/css" href="{{ css_catalyst_src }}/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="{{ css_catalyst_src }}/bootstrap-responsive.css" />
+		<link rel="stylesheet" type="text/css" href="{{ css_catalyst_src }}/jquery-ui.css" />
+		
+		
+		<script type='text/javascript' src="{{ js_catalyst_src }}/jquery-1.9.1.js"></script>
+		<script type='text/javascript' src="{{ js_catalyst_src }}/jquery-ui.js"></script>
+		<script type='text/javascript' src="{{ js_catalyst_src }}/bootstrap.js"></script>
+		<script type='text/javascript' src="{{ js_catalyst_src }}/common.js"></script>
+		<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic"/>
+		<style type='text/css'>
+		    body {
+			font-family: 'Source Sans Pro' !important;		    	
+		    }
+		</style>
+		
+		<script type='text/javascript'>
+			{% if active_success %}
+				ShopifyPOS.flashNotice("{{ active_success }}")
+			{% endif %}
+			{% if active_error %}
+				ShopifyPOS.flashError("{{ active_error }}")
+			{% endif %}
+		</script>
+		<script type='text/javascript'>
+			window.sessionToken = '{{ shopify_jwt }}';
+			
+			if (!window.sessionToken){
+				window.sessionToken = getUrlVars()['shopify_jwt'];
+			}
+			
+			function renewToken() {
+				$.ajax({ url: '/shopify_jwt?shopify_jwt=' + window.sessionToken }).done(function(token) {
+					window.sessionToken = token;
+					rewriteUrls(window.sessionToken, /^\//, "shopify_jwt");
+				});
+			}
+
+			setInterval(renewToken, {{ shopify_jwt_expiry }} * 1000);
+
+			$(document).ready(function() {
+				$.ajaxSetup({
+					beforeSend: function (xhr,settings) {
+						xhr.setRequestHeader('Authorization', "Bearer " + window.sessionToken);
+				}});
+				rewriteUrls(window.sessionToken, /^\//, "shopify_jwt");
+			});
+		</script>
+	</head>
+	<body>

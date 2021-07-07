@@ -1,0 +1,50 @@
+{% include 'pos_header' %}
+
+<style type='text/css'>
+	.image a { height: auto; color: #FFF; font-style: italic; }
+	.image img { width: 100%; }
+	.image .image-description {
+	    transition: background 0.3s ease-in-out;
+	    -o-transition: background 0.3s ease-in-out;
+	    -ms-transition: background 0.3s ease-in-out;
+	    -moz-transition: background 0.3s ease-in-out;
+	    -webkit-transition: background 0.3s ease-in-out;
+	    color: #FFF;
+	    background-color: #64b7b3;
+	    padding: 14px 20px 22px;
+	}
+	.image .image-description h5 {		
+	    font-weight: 400;
+	    line-height: 130%;
+	    font-size: 20px;
+	    margin: 0;
+	}
+	
+	.image {
+		font-family: 'Source Sans Pro';
+		font-size: 16px;
+		text-rendering: optimizelegibility;
+	}
+</style>
+
+<script>
+	window.location.href='/';
+</script>
+
+<div class="container-fluid">
+	<div class="row-fluid" style='margin-top: 64px;'>
+		<div class="span6">
+			<div class="image">
+				<a href='/'>
+					<img src='/static/img/giftreggie-logo-classic.jpg'>
+				</a>
+				<div class="image-description">
+					<h5>Classic View</h5>
+					<span>Access the normal Gift Reggie back-end on your iPad.</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% include 'pos_footer' %}

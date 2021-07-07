@@ -1,0 +1,106 @@
+{% include 'proxy_header' %}
+
+<script type='text/javascript'>
+
+{% if is_admin %}
+	window.jqReady.push(function(jQuery) {
+		(function( $ ) {
+			{% capture variant_id_list %}[{% for product in products %}{{ product.variant_id }}{% unless forloop.last %},{% endunless %}{% endfor %}]{% endcapture %}
+			setCookie("giftreggie-logged", '{"admin": 1, "wishlist_id": "{{ id }}", "registry_id": null, "registry_title": null, "variant_ids": {{ variant_id_list }} }');
+			var neededAttributes = {};
+			{% unless cart.attributes.wishlist_id == id %}
+				neededAttributes['attributes[wishlist_id]'] = {{ id }};
+			{% endunless %}
+			{% unless cart.attributes.wishlist_variant_ids == variant_id_list %}
+				neededAttributes['attributes[wishlist_variant_ids]'] = "{{ variant_id_list }}";
+			{% endunless %}
+			if (Object.keys(neededAttributes).length > 0)
+				$.ajax({ url: '{% if testing %}/mock{% endif %}/cart/update.js', type: "POST", data: neededAttributes });	
+				
+		})(jQuery);
+	});
+{% endif %}
+
+</script>
+<div class="giftreggie-registry giftreggie-wishlist giftreggie-front {% if is_admin %}giftreggie-manager{% else %}giftreggie-guest{% endif %} giftreggie-theme-{{ theme.name | handleize }}">
+	<h2>{{ 'gift-reggie.wishlist.title' | t: name: (owner_name | escape_html) }}</h2>
+
+	{% if is_admin %}
+		<div class="giftreggie-sharing">
+			<input class="giftreggie-permalink" readonly type='text' value='https://{{ shop.domain }}{{ proxy_url }}/wishlist/{{ id }}'/>
+			{% include 'proxy_sharing_snippet' %}
+		</div>
+	
+	
+		<p class="giftreggie-add-products"><a href='{{ browsing_link }}'>{{ 'gift-reggie.wishlist.browsing' | t }}</a></p>
+	{% endif %}
+	
+	{% if products.size > 0 %}
+		<table class="giftreggie-desktop giftreggie-view-registry" id="view-registry">
+			<tr>
+				<th>{{ 'gift-reggie.terms.product_title' | t }}</th>
+				<th>{{ 'gift-reggie.terms.product_image' | t }}</th>
+				<th>{{ 'gift-reggie.terms.product_price' | t }}</th>
+				<th>{{ 'gift-reggie.terms.cart' | t }}</th>
+				{% if is_admin %}
+				<th>{{ 'gift-reggie.terms.delete' | t }}</th>
+				{% endif %}
+			</tr>
+			{% for entry in products %}
+				<input type='hidden' name="item-id" value="{{ entry.id }}">
+				<tr class="registry-variant giftreggie-registry-variant" data-id="{{ entry.variant_id }}" id="registry-variant-{{ entry.variant_id }}">
+					<td><a href='{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ entry.handle | escape_html }}?variant={{ entry.variant_id }}'>{{ entry.title | escape_html }}</a></td>
+					<td style="text-align:center;"><img src='{{ entry.image }}'/></td>
+					<td><span class='money'>{{ entry.price | money }}</span></td>
+					<td><form method="post" action="{% if language %}/{{ language }}{% endif %}/cart/add" method="post"><button name="id" value="{{ entry.variant_id }}">{{ 'gift-reggie.cart-update.add' | t }}</button></form></td>
+					{% if is_admin %}
+						<td><form method="post"><input type='hidden' name='id' value='{{ entry.variant_id }}'/><button name='action' class="remove-button" value="remove">&times;</button></form></td>
+					{% endif %}
+				</tr>
+			{% endfor %}
+			</table>
+		</table>
+		<ul class="giftreggie-mobile giftreggie-view-registry">
+			{% for entry in products %}
+				<li class='giftreggie-registry-variant registry-variant'>
+					{% if is_admin %}
+						<div class="giftreggie-registry-variant-delete"><form method="post"><input type='hidden' name='id' value='{{ entry.variant_id }}'/><button name='action' class="remove-button" value="remove">&times;</button></form></div>
+					{% endif %}
+					<p class="giftreggie-item-image"><a href='{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ entry.handle | escape_html  }}?variant={{ entry.variant_id }}'><img src='{{ entry.image }}'/></a></p>
+					<p>
+						<a class="giftreggie-item-name" href='{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ entry.handle | escape_html  }}?variant={{ entry.variant_id }}'>{{ entry.title | escape_html }}</a>
+					</p>
+					<form method="post"action="{% if language %}/{{ language }}{% endif %}/cart/add" method="post">
+						<span class='money'>{{ entry.price | money }}</span>
+						<button name="id"  class="giftreggie-add-to-cart"  value="{{ entry.variant_id }}">{{ 'gift-reggie.cart-update.add' | t }}</button>
+					</form>
+				</li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		<p style="text-align: center;">{{ 'gift-reggie.wishlist.empty' | t }}</p>
+	{% endif %}
+	{% if is_admin %}
+		<div class="action-buttons">
+			<span><button id="delete-button" name='action' value='close'>{{ 'gift-reggie.wishlist.delete' | t }}</button></span>
+			<script type='text/javascript'>
+				window.jqReady.push(function(jQuery) {
+					(function( $ ) {
+						$('#delete-button').click(function() {
+							if (confirm("{{ 'gift-reggie.wishlist.delete_warning' | t }}")) {
+								$(this).attr('disabled', 'disabled');
+								$.ajax({ url: '{% if testing %}/mock{% endif %}/cart/update.js', type: "POST", async: false, data: { 'attributes[wishlist_id]': '', 'attributes[wishlist_variant_ids]': '' } });	
+								deleteCookie("giftreggie-logged");
+								postUrl(null, { action: 'close' });
+								return false;
+							}
+							return false;
+						});
+					})(jQuery);
+				});
+			</script>
+		</div>
+	{% endif %}
+</div>
+
+{% include 'proxy_footer' %}

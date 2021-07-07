@@ -1,0 +1,29 @@
+<script type='text/javascript'>
+window.GRJQLoaded = function(jQuery) {
+	for (var i = 0; i < window.jqReady.length; ++i)
+		window.jqReady[i](jQuery);
+}
+</script>
+{% if shop_jquery == 2 %} 
+<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+<script type='text/javascript'>
+	var loadedjQuery = $.noConflict(true);
+	window.GRJQLoaded(loadedjQuery);
+</script>
+{% elsif shop_jquery == 1 %}
+<script type='text/javascript'>
+	if (typeof jQuery != 'undefined') {  
+		var valid = false;
+		var version = jQuery().jquery;
+		var groups = /(\d+)\.(\d+)/.exec(version);
+		if (groups[1] > 1 || groups[2] >= 5)
+			valid = true;
+		if (valid)
+			window.GRJQLoaded(jQuery);
+		else
+			alert("The version of jQuery you're using is too old; Gift Reggie requires at least version 1.5. Please either upgrade your jQuery, or set the option in Gift Reggie's control panel for jQuery integration to 'Load JQuery Automatically'.");
+	} else {
+		alert("Gift Reggie requires at version 1.5 of jQuery. Please include jQuery, or set the option in Gift Reggie's control panel for jQuery integration to 'Load JQuery Automatically'.");
+	}
+</script>
+{% endif %}

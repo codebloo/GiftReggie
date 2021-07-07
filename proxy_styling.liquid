@@ -1,0 +1,604 @@
+<style type='text/css'>
+	.giftreggie-front p {
+		width: auto;
+		display: block;
+		margin: 8px 0;
+	}
+	.giftreggie-front p span {
+		display:block;
+	}
+	
+	.giftreggie-front .giftreggie-footer, .giftreggie-front h4, .giftreggie-front h3 {
+	}
+	
+	.giftreggie-front .giftreggie-body {
+		margin: 18px 0;
+	}
+	.giftreggie-front .giftreggie-body form {
+		margin: 0;
+	}
+
+	.giftreggie-customer form div label {
+		display: inline-block;
+	}
+
+	.giftreggie-customer form div input[type='text'], .giftreggie-customer form div input[type='password'] {
+		display: block;
+		width: 100%;
+	}
+
+	.giftreggie-login .giftreggie-left, .giftreggie-login .giftreggie-right {
+		display: inline-block;
+		width: 49%;
+		vertical-align: top;
+	}
+	
+	.giftreggie-find ul, .giftreggie-front p, .giftreggie-front table {
+		width: 100%;
+		max-width: 100%;
+	}
+	
+	.giftreggie-front table {
+		margin: 12px 0;
+		border-collapse: collapse;
+	}
+	
+	
+	.giftreggie-front table tr td, .giftreggie-front table tr th {
+               padding: 8px;
+               border: 1px solid #AAA;
+               text-align: center;
+	}
+	
+	.giftreggie-front h2 {
+		text-align: center;
+	}
+	
+	.giftreggie-band {
+		padding: 12px;
+		background-color: #dddddd;
+		margin: 12px 0;
+		max-width: 600px;
+	}
+	
+	#status-bar {
+		text-align: center;
+		font-weight: bold;
+		font-size: 150%;
+		margin: 24px 0;
+	}
+	
+	.giftreggie-front .giftreggie-error, .giftreggie-front .giftreggie-errors {
+		color: #F00;
+		font-weight: bold;
+		text-align: center;
+		margin: 12px 0;
+	}
+	
+	
+	
+	.giftreggie-registry p, .giftreggie-registry table {
+		width: 100%;
+	}
+	
+	.giftreggie-registry-title {
+		margin-top: 0;
+	}
+	
+	.giftreggie-registry .giftreggie-no-products {
+		font-size: 18pt;
+		display: block;
+	}
+	
+	.giftreggie-registry-title {
+	}
+	
+	.giftreggie-want-quantity, .registry-variant-quantity, .giftreggie-line-number {
+		width: 48px;
+	}
+	
+	.giftreggie-registry .registry-variant img {
+		max-height: 64px;
+	}
+	
+	.giftreggie-edit-description {
+		text-align: right;
+	}
+	
+	.giftreggie-items-page {
+		text-align: right;
+		margin: 12px;
+	}
+	
+	.giftreggie-registry .action-buttons {
+		text-align: center;
+	}
+	
+	.giftreggie-description {
+		margin-top: 12px;
+	}
+	
+	#pagination-div {
+		text-align: center;
+	}
+	
+	.action-buttons {
+		margin: 12px;
+	}
+	
+	.giftreggie-registry-image {
+		display: block;
+		margin: 12px auto;
+		text-align: center;
+		max-width: 100%;
+	}
+	
+	.giftreggie-registry-image img {
+		max-width: 100%;
+	}
+	
+	.giftreggie-front span.registry-text, .giftreggie-front span.registry-text-capitalize { display: inline; }
+	
+	
+	
+	
+	.giftreggie-registry p, .giftreggie-registry table {
+		width: 100%;
+	}
+	
+	.giftreggie-registry-title {
+		margin-top: 0;
+	}
+	
+	.giftreggie-registry .giftreggie-no-products {
+		font-size: 18pt;
+		display: block;
+	}
+	
+	.giftreggie-registry-title {
+	}
+	
+	.giftreggie-want-quantity, .registry-variant-quantity {
+		width: 48px;
+	}
+	
+	.giftreggie-registry .registry-variant img {
+		max-height: 64px;
+	}
+	
+	.giftreggie-edit-description {
+		text-align: right;
+	}
+	
+	.giftreggie-items-page {
+		text-align: right;
+		margin: 12px;
+	}
+	
+	.giftreggie-registry .action-buttons {
+		text-align: center;
+	}
+	
+	.giftreggie-description {
+		margin-top: 12px;
+	}
+	
+	#pagination-div {
+		text-align: center;
+	}
+	
+	.action-buttons {
+		margin: 12px;
+	}
+	
+	.giftreggie-add-products {
+		font-size: 150%;
+		font-weight: bold;
+		text-align: center;
+	}
+	
+	.giftreggie-permalink {
+		margin: 0 auto;
+		width: 600px;
+		display: block;
+		text-align: center;
+		max-width: 100%;
+	}
+</style>
+<style type='text/css'>
+	.registry-profile span {
+		width: 49%;
+		display: inline-block;
+	}
+	.registry-profile p {
+		width: 100%;
+	}
+	.registry-profile input[type='text'], .registry-profile input[type='password'], .registry-profile input[type='email'], .registry-profile textarea, .registry-profile .country-selector {
+		width: 95%;
+		display: block;
+	}
+	.registry-profile textarea {
+		min-height: 64px;
+	}
+	
+	.registry-profile {
+		margin-bottom: 12px;
+	}
+	
+	.registry-profile-block {
+		width: 98%;
+		max-width: 98%;
+		padding: 1%;
+	}
+	
+	
+	.registry-profile-block  p span {
+		width: 49%;
+		display: inline-block;
+		vertical-align:middle;
+	}
+	.registry-profile-block p span:first-child {
+		text-align: right;
+	}
+	.registry-profile-block p span:last-child {
+		text-align: left;
+	}
+	.registry-profile-block p span:last-child {
+		text-align: left;
+	}
+	
+	.registry-profile-block p span input[type='file'] {
+		display: inline-block;
+		width: auto;
+	}
+</style>
+
+
+<style type='text/css'>
+	#registry-link { width: 98%; display: block;}
+	.share-registry .giftreggie-share-email-details { margin: 12px 0; }
+</style>
+
+
+<style type='text/css'>
+	.giftreggie-admin ul li a {
+		color: #444;
+		text-decoration: none;
+	}
+
+	.giftreggie-band {
+		width: auto;
+		max-width: 100%;
+	}
+
+	#registry-header h2 {
+		display: inline-block;
+	}
+	
+	.giftreggie-admin ul {
+		display: inline-block;
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
+	
+	.giftreggie-header h3 {
+		display: inline-block;
+	}
+
+	.giftreggie-admin ul li {
+		display: inline-block;
+		margin: 2px 12px;
+		color: #AAA;
+		font-size: 110%;
+	}
+
+	ul#giftreggie-client-menu li.active, ul#giftreggie-client-menu li:hover, .giftreggie-admin ul#giftreggie-admin-menu li.active, .giftreggie-admin  ul#giftreggie-admin-menu li:hover, .giftreggie-admin ul#giftreggie-admin-menu:hover li:hover.active {
+		text-decoration: none;
+		border-bottom: 2px solid #AAA;
+		margin-bottom: 0;
+	}
+	
+	.giftreggie-admin ul:hover li.active {
+		border-bottom: 0;
+	}
+	
+	.giftreggie-registry-type {
+		text-align: center;
+	}
+	
+	.giftreggie-notes textarea {
+		width: 100%;
+	}
+</style>	
+
+<style>
+	.giftreggie-share-buttons {
+		text-align: center;
+		padding: 0;
+	}
+	
+	ul.giftreggie-share-buttons li {
+		color: #FFF;
+		font-family: Helvetica;
+		border: 0;
+		font-size: 12px;
+		font-weight: bold;
+		padding: 8px 16px;
+		border-radius: 8px;
+		cursor: pointer;
+		display: inline-block;
+		padding-left: 36px;
+		background: none;
+		background-repeat: no-repeat;
+		background-position-y: 50%;
+		background-position-x: 4px;
+	}
+	
+	.giftreggie-share-buttons .giftreggie-share-email {
+		background-color: #000;
+		background-image: url('{{ external_hostline }}/static/img/email-logo.png');
+	}
+
+	.giftreggie-share-buttons .giftreggie-share-facebook {
+		background-color: #3b579d;
+		background-image: url('{{ external_hostline }}/static/img/facebook-logo.png');
+		background-position-x: 0;
+		
+	}
+	.giftreggie-share-buttons .giftreggie-share-twitter {
+		background-color: #00b0ed;
+		background-image: url('{{ external_hostline }}/static/img/twitter-logo.png');
+	}
+	
+	.giftreggie-share-buttons .giftreggie-share-pinterest {
+		background-color: #cc2127;
+		background-image: url('{{ external_hostline }}/static/img/pinterest-logo.png');
+	}
+	
+	.giftreggie-share-buttons .giftreggie-share-instagram {
+		background-color: #724f31;
+		background-image: url('{{ external_hostline }}/static/img/instagram-logo.png');
+		background-position-x: 8px;
+	}
+	
+	.giftreggie-share-buttons .giftreggie-share-tumblr {
+		background-color: #36465d;
+		background-image: url('{{ external_hostline }}/static/img/tumblr-logo.png');
+	}
+	
+	
+	.giftreggie-share-buttons .giftreggie-share-googleplus {
+		background-color: #dd4b39;
+		background-image: url('{{ external_hostline }}/static/img/googleplus-logo.png');
+	}
+	
+	.giftreggie-share-buttons .giftreggie-share-linkedin {
+		background-color: #007bb6;
+		background-image: url('{{ external_hostline }}/static/img/linkedin-logo.png');
+	}
+	
+	.giftreggie-share-email-details {
+		max-width: 700px;
+		display: block;
+		margin:0 auto;
+	}
+	
+	.giftreggie-share-email-remaining {
+		text-align: center;
+	}
+	
+	.giftreggie-share-email-details textarea, .giftreggie-share-email-details input, .giftreggie-share-email-details button {
+		width: 100%;
+	}
+	
+	.giftreggie-share-email-details-body {
+		height: 100px;
+	}
+
+	.giftreggie-add-to-cart {
+		display: inline-block;
+		margin: 12px;
+	}
+	
+	
+	<!-- The great styling of 2016. -->
+	.giftreggie-front.giftreggie-theme-atlantic {
+		margin: 3% 25% 3% 25%;
+	}
+
+	.giftreggie-front.giftreggie-theme-atlantic input[type=submit] {
+		margin: 10px 0 10px 0;
+		padding: 10px 20px;
+		background-color: #d3d3d3;
+		border: 1px solid black;
+		text-transform: uppercase;
+	}
+
+	.giftreggie-front.giftreggie-theme-atlantic input[type=text] {
+		border: 1px solid #d3d3d3;
+		padding: 5px;
+	}
+
+	.giftreggie-front.giftreggie-theme-atlantic input[type=password] {
+		border: 1px solid #d3d3d3;
+		padding: 5px;
+	}
+
+	.giftreggie-front.giftreggie-theme-canopy {
+		margin: 3% 10% 3% 10%;
+	}
+
+	.giftreggie-front.giftreggie-theme-canopy input[type=submit] {
+		margin: 10px 0 10px 0;
+		padding: 10px 20px;
+		background-color: #d3d3d3;
+		border: 1px solid black;
+		text-transform: uppercase;
+	}
+
+	.giftreggie-front.giftreggie-theme-canopy input[type=text] {
+		border: 1px solid #d3d3d3;
+		padding: 5px;
+	}
+
+	.giftreggie-front.giftreggie-theme-canopy input[type=password] {
+		border: 1px solid #d3d3d3;
+		padding: 5px;
+	}
+
+	.giftreggie-front.giftreggie-theme-blockshop {
+		margin: 0 10% 0 10%;
+	}
+	
+	/* Padding Changes */
+	.giftreggie-front.giftreggie-theme-brooklyn .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-brooklyn .registry-variant-quantity {
+		width: 50px;
+		border: 1px solid black;
+	}
+	.giftreggie-front.giftreggie-theme-classic .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-classic .registry-variant-quantity, .giftreggie-front.giftreggie-theme-classic .giftreggie-line-number input[type=text] {
+		width: 50px !important;
+	}
+	.giftreggie-front.giftreggie-theme-minimal .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-minimal .registry-variant-quantity, .giftreggie-front.giftreggie-theme-minimal .giftreggie-line-number input[type=text] {
+		width: 50px !important;
+	}
+	.giftreggie-front.giftreggie-theme-supply .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-supply .registry-variant-quantity, .giftreggie-front.giftreggie-theme-supply .giftreggie-line-number input[type=text] {
+		width: 50px !important;
+	}
+	.giftreggie-front.giftreggie-theme-pop .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-pop .registry-variant-quantity, .giftreggie-front.giftreggie-theme-pop .giftreggie-line-number input[type=text] {
+		width: 50px !important;
+	}
+	.giftreggie-front.giftreggie-theme-new-standard .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-new-standard .registry-variant-quantity {
+		width: 50px;
+	}
+	.giftreggie-front.giftreggie-theme-retina .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-retina .registry-variant-quantity, .giftreggie-front.giftreggie-theme-retina .giftreggie-line-number input[type=text] {
+		width: 50px !important;
+	}
+	.giftreggie-front.giftreggie-theme-responsive .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-responsive .registry-variant-quantity, .giftreggie-front.giftreggie-theme-responsive .giftreggie-line-number input[type=text] {
+		width: 50px !important;
+	}
+	.giftreggie-front.giftreggie-theme-testament .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-testament .registry-variant-quantity, .giftreggie-front.giftreggie-theme-testament .giftreggie-line-number input[type=text] {
+		width: 50px !important;
+	}
+	.giftreggie-front.giftreggie-theme-blockshop .giftreggie-want-quantity, .giftreggie-front.giftreggie-theme-blockshop .registry-variant-quantity, .giftreggie-front.giftreggie-theme-blockshop .giftreggie-line-number input[type=text] {
+		width: 50px !important;
+	}
+	.giftreggie-alert {
+		display: block;
+		background: #EEE;
+		border: 1px solid #DDD;
+		color: #000;
+		padding: 12px;	
+		margin: 12px auto;
+	}
+	
+	/* For successes. */
+	.giftreggie-alert.giftreggie-success {
+		background: #EFE;
+		border: 1px solid #DFD;
+		color: #0A0;
+	}
+	/* For failures. */
+	.giftreggie-alert.giftreggie-failure {
+		background: #FEE;
+		border: 1px solid #FDD;
+		color: #A00;
+	}
+</style>
+
+<style type='text/css'>
+.giftreggie-mobile {
+	display: none  !important;
+}
+
+@media only screen and (max-width: 760px)  {
+	.giftreggie-desktop {
+		display: none !important;
+	}
+	
+	.giftreggie-mobile {
+		display: block !important;
+	}
+	
+	.registry-profile-block p span, .registry-profile span {
+		display: block;
+		width: 100%;
+	}
+	
+	ul.giftreggie-share-buttons {		
+		display: flex;
+		justify-content: space-between;
+	}
+	
+	ul.giftreggie-share-buttons li {
+		border-radius: 20px;
+		padding: 0;
+		width: 36px;
+		height: 36px;
+		background-position-x: 50%;
+		font-size: 0;
+		margin: 0;
+	}
+	
+	ul.giftreggie-view-registry {
+		padding: 0;
+		list-style: none;
+	}
+	
+	ul.giftreggie-view-registry li {
+		border-top: 1px solid #AAA;
+		margin: 0;
+		width: 100%;
+	}
+	
+	ul.giftreggie-view-registry li.registry-variant .giftreggie-item-image {
+		text-align: center;
+	}
+	
+	ul.giftreggie-view-registry li.registry-variant img {
+		max-height: none;
+		max-width: 100%;
+	}
+	
+	ul.giftreggie-view-registry li.registry-variant table td, ul.giftreggie-view-registry li.registry-variant table th {
+		border: 0;
+	}
+	
+	ul.giftreggie-view-registry li.registry-variant span {
+		display: inline-block;
+	}
+	
+	.giftreggie-registry-variant-delete {
+		position: absolute;
+		right: 0;
+		top: 4px;
+		cursor: pointer;
+		z-index: 100;
+	}
+	.giftreggie-registry-variant-delete form, .giftreggie-registry-variant-delete form button {
+		margin: 0;
+		cursor: pointer;
+	}
+	
+	.giftreggie-registry-variant {
+		position: relative;
+	}
+	
+	.giftreggie-registry-variant-delete button {
+		border:0;
+		background:none;
+		border: 1px solid #AAA;
+		color: #AAA;
+		border-radius: 32px;
+		padding: 2px 6px;
+	}
+	
+}
+</style>
+
+{% if registry_css %}
+	<style type='text/css'>
+		{{ registry_css | escape_css }}
+	</style>
+{% endif %}
+

@@ -1,0 +1,95 @@
+{% include 'proxy_header' %}
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+<div class="giftreggie-front giftreggie-find giftreggie-theme-{{ theme.name | handleize }}">
+	{% if searched %}
+		<div class="giftreggie-header">
+			<h3 class="h1">{{ 'gift-reggie.find-registry.result_title' | t }}</h3>
+			{% if search_results and search_results.size > 0 %}
+				<p><a href='{{ proxy_url }}/find' class="body1">{{ 'gift-reggie.find-registry.find_again' | t }}</a></p>
+			{% endif %}
+		</div>
+		<div class="giftreggie-body">
+			{% if search_results.size > 0 %}
+				<table class="giftreggie-desktop">
+					<tr>
+						<th class="body1">{{ 'gift-reggie.terms.registry_name' | t }}</th>
+						<th class="body1">{{ 'gift-reggie.terms.registry_event_date' | t }}</th>
+						<th class="body1">{{ 'gift-reggie.terms.registry_registrant' | t }}</th>
+						<th class="body1">{{ 'gift-reggie.terms.registry_coregistrant' | t }}</th>
+					</tr>
+					{% for result in search_results %}
+					<tr>
+						<td class="body1"><a href='{{ proxy_url }}/registry/{{ result.id }}'>{{ result.name | escape_html }}</a></td>
+						<td class="body1">{{ result.event_datetime | date }}</td>
+						<td class="body1">{{ result.registrant | escape_html }}</td>
+						<td class="body1">{% if result.coregistrant %}{{ result.coregistrant | escape_html }}{% else %}None{% endif %}</td>
+					</tr>
+					{% endfor %}
+				</table>
+				<div class="giftreggie-mobile">
+					<ul>
+						{% for registry in search_results %}
+						<li>
+							<p><a href='{{ proxy_url }}/registry/{{ registry.id }}' class="body1">{{ registry.name | escape_html }}</a></p>
+							<p class="body1">{{ 'gift-reggie.terms.registry_event_date' | t }}: {{ registry.event_datetime | date }}</p>
+							<p class="body1">{{ 'gift-reggie.terms.registry_registrant' | t }}: {{ registry.registrant | escape_html }}</p>
+							<p class="body1">{% if registry.coregistrant %}{{ 'gift-reggie.terms.registry_coregistrant' | t }}: {{ registry.coregistrant | escape_html }}{% endif %}</p>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% else %}
+				<p><a href='{{ proxy_url }}/find' class="body1 text-link">{{ 'gift-reggie.find-registry.no_results' | t }}</a></p>
+			{% endif %}		
+		</div>
+	{% else %}
+		<div class="giftreggie-header">
+			<h3 class="h1">{{ 'gift-reggie.find-registry.title' | t }}</h3>
+			<p class="body1">{{ 'gift-reggie.find-registry.description' | t }}</p>
+		</div>
+		<div class="giftreggie-body">
+		   
+			<form action="?" method="get" class="gift-reggie-search-form">
+			     <div class="row">
+			         <div class="col-12 col-lg-6">
+			     
+		
+					<span class="body1">{{ 'gift-reggie.terms.first_name' | t }}</span>
+					<span><input name='first-name' type='text' class="body1" /></span>
+			</div>
+			  <div class="col-12 col-lg-6">
+					<span class="body1">{{ 'gift-reggie.terms.last_name' | t }}</span>
+					<span><input name='last-name' type='text' class="body1" /></span>
+			</div>
+			</div>
+			 <div class="row">
+			         <div class="col-12 col-lg-6">
+					<button class="button cta">Find</button>
+			</div>
+			</div>
+			</form>
+		</div>
+	{% endif %}
+	<div class="giftreggie-footer body1">
+		{% if user %}
+			<p><a href='{{ proxy_url }}/create' class="body1 text-link">{{ 'gift-reggie.find-registry.create_manage' | t }}</a></p>
+		{% else %}
+			{% if customer_account_integration %}
+				{% if shop.customer_accounts_enabled %}
+					{% if customer %}
+						{{ 'gift-reggie.please_wait_redirect' | t }}
+					{% else %}
+            {% capture checkout_url %}{{ proxy_url }}/find?lang={{ language }}{% endcapture %}
+						<p><a href='{% if language %}/{{ language }}{% endif %}/account/login?checkout_url={{ checkout_url | url_escape }}' class="body1 text-link">{{ 'gift-reggie.not_logged' | t }}</a></p>
+					{% endif %}
+				{% endif %}
+			{% endif %}
+		{% endif %}
+	</div>
+</div>
+</div>
+</div>
+</div>
+{% include 'proxy_footer' %}

@@ -1,0 +1,28 @@
+{% include 'pos_header' %}
+
+{% include 'pos_snippet_registry_select' %}
+
+<script type='text/javascript'>
+	initializeTagOrder(function(id) {
+		ShopifyPOS.fetchCart({
+			success: function(cart) {
+				cart.addProperties({
+					registry_id: id
+				}, { 
+					success: function(cart) {
+						ShopifyPOS.flashNotice("Successfully tagged order as being for registry #" + id + "!");
+						ShopifyPOS.Modal.close();
+					}, error: function(errors) {
+						ShopifyPOS.flashNotice("Unable to tag order for registry #" + id + "id.");
+						$(this).prop('disabled', false);
+					}
+				});
+			}, 
+			error: function(errors) {
+				ShopifyPOS.flashError("Failed to retrieve cart.");
+			}
+		});
+	});
+</script>
+
+{% include 'pos_footer' %}

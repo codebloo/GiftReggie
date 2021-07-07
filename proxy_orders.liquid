@@ -1,0 +1,33 @@
+{% include 'proxy_registry_header' %}
+<style type='text/css'>
+	.giftreggie-profile-buttons {
+		text-align: center;
+		width: 100%;
+		margin: 12px 0;
+	}
+</style>
+
+{% if orders.size > 0 %}
+<table class='giftreggie-orders'>
+	<tr>
+		<th>{{ 'gift-reggie.terms.order_number' | t }}</th>
+		<th>{{ 'gift-reggie.terms.date' | t }}</th>
+		<th>{{ 'gift-reggie.terms.user' | t }}</th>
+		<th>{{ 'gift-reggie.terms.email' | t }}</th>
+		<th>{{ 'gift-reggie.terms.purchase' | t }}</th>
+	</tr>
+	{% for order in orders %}
+		<tr>
+			<td>{{ order.order_name | escape_html }}</td>
+			<td>{{ order.created_datetime | date }}</td>
+			<td>{{ order.name | escape_html }}</td>
+			<td>{{ order.email | escape_html }}</td>
+			<td>{{ order.product_name | escape_html }} x {{ order.product_quantity }}</td>
+		</tr>
+	{% endfor %}
+</table>
+{% else %}
+<p class="giftreggie-no-orders">{{ 'gift-reggie.manage-registries.no-orders' | t }}</p>
+{% endif %}
+
+{% include 'proxy_registry_footer' %}

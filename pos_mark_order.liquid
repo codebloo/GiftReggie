@@ -1,0 +1,35 @@
+{% include 'pos_header' %}
+
+{% for n in order.note_attributes %}
+	{% if n.name == "registry_id" %}
+		{% assign rid = n.value %}
+	{% endif %}
+{% endfor %}
+
+{% if rid %}
+    <script type='text/javascript'>
+	    ShopifyPOS.flashNotice("This order has already been marked as part of registry #{{ rid }}!");
+	    ShopifyPOS.Modal.close();
+	</script>
+{% else %}
+	{% if form.method == "POST" %}
+	    <script type='text/javascript'>
+		{% if form.success %}
+			ShopifyPOS.flashNotice("This order has already been marked as part of registry #{{ rid }}!");
+			ShopifyPOS.Modal.close();
+		{% else %}
+			ShopifyPOS.flashNotice("There was an error marking this order as part of the registry. Please contact gift-reggie@eshopadmin.com for details.");
+		{% endif %}
+		</script>
+	{% else %}
+		{% include 'pos_snippet_registry_select' %}
+
+		<script type='text/javascript'>
+			initializeTagOrder(function(id) {
+				$('<form method="post"><input type="hidden" name="id" value="{{ order.id }}"/><input type="hidden" name="registry_id" value="' + id + '"/></form>').submit();
+			});
+		</script>
+	{% endif %}
+{% endif %}
+
+{% include 'pos_footer' %}

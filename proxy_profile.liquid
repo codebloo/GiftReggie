@@ -1,0 +1,78 @@
+{% include 'proxy_registry_header' %}
+<script type='text/javascript' src="{{ external_hostline }}/{{ js_src }}/jdate.js"></script>
+<style type='text/css'>
+	.giftreggie-profile-buttons {
+		text-align: center;
+		width: 100%;
+		margin: 12px 0;
+	}
+</style>
+<form id='giftreggie-update-form' action="?" method="post" enctype="multipart/form-data">
+	{% include 'proxy_registry_info' %}
+	<div class="giftreggie-profile-buttons">
+		<input type='submit' value="{{ 'gift-reggie.registry-profile.update' | t }}"/>
+	</div>
+</form>
+<script type='text/javascript'>
+window.jqReady.push(function(jQuery) {
+  (function( $ ) {
+    $('input[name="registry-password"]').attr('placeholder', '');
+        
+    function displayError(message) { return displayModal(message).done(function() { $("#giftreggie-update-form input[type='submit']").removeAttr('disabled'); }); }
+    
+    $('#giftreggie-update-form').submit(function() {
+      $(this).find("input[type='submit']").attr('disabled', 'disabled');
+      var mappings = {
+        'registry-title': "{{ 'gift-reggie.create-registry.errors.registry-title' | t }}",
+        'registrant-first': "{{ 'gift-reggie.create-registry.errors.registrant-first' | t }}",
+        'registrant-last': "{{ 'gift-reggie.create-registry.errors.registrant-last' | t }}",
+        'event-date': "{{ 'gift-reggie.create-registry.errors.event-date' | t | escape }}",
+        'contact-address': "{{ 'gift-reggie.create-registry.errors.contact-address' | t }}",
+        'contact-city': "{{ 'gift-reggie.create-registry.errors.contact-city' | t }}",
+        'contact-country': "{{ 'gift-reggie.create-registry.errors.contact-country' | t }}",
+        'contact-postal': "{{ 'gift-reggie.create-registry.errors.contact-postal' | t }}"
+      };
+      for (var i in mappings) {
+        if (mappings.hasOwnProperty(i)) {
+          if ($(this).find("input[name='" + i + "']").val() == '' || $(this).find("textarea[name='" + i + "']").val() == '') {
+            displayError(mappings[i]);
+            return false;
+          }
+        }
+      }
+      
+      if( $('input[name="registry-image"]').val() != "" && !$('input[name="registry-image"]').val().match(/\.(jpg|jpeg|gif|png|bmp|svg|apng)$/) ) {
+        displayError("{{ 'gift-reggie.create-registry.errors.image-type' | t }}");
+        return false;
+      }
+      
+      var inputDate = $('input[name="event-date"]').val();
+      var parsedDate;
+      try {
+        parsedDate = jdate.strptime(inputDate, "{{ datetime_format_input }}");
+        {% if datetime_format_input contains "%Y" %}
+          // Because people love to ignore instructions.
+          if (!parsedDate)
+            parsedDate = jdate.strptime(inputDate, "{{ datetime_format_input | replace: "%Y", "%y" }}");
+        {% endif %}
+      }
+      catch (e) {
+        
+      }
+      
+      
+      if (!parsedDate) {
+        displayError("{{ 'gift-reggie.create-registry.errors.event-date-format' | t }}: {{ input_format }}");
+        return false;
+      }
+      if (parsedDate <= new Date() || parsedDate.getYear() >= 2100) {
+        displayError("{{ 'gift-reggie.create-registry.errors.event-date-valid' | t }}");
+        return false;
+      }
+      return true;
+    });
+  })(jQuery);
+});
+</script>
+
+{% include 'proxy_registry_footer' %}

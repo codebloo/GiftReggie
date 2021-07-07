@@ -1,0 +1,105 @@
+{% include 'pos_header' %}
+
+{% include 'pos_registry_header' %}
+
+<div class="registry-container">
+  <div class="back-button" style='margin-left: 12px;'><a href='/pos/streamlined'>&larr;</a></div>
+  <h1><a href='/pos/view_registry/{{ registry.id }}'>{{ registry.name | escape_html }}</a></h1>
+  <div class="grid">
+    {% for entry in registry.products %}
+    <div class="grid-cell" {% if forloop.index0 > 3 %}style='border-top:0;'{% endif %} data-needed="{{ entry.needs }}" data-variant-id="{{ entry.variant_id }}" data-properties="{{ entry.properties | json }}">
+      <div class="grid-image" style='background-image:url({{ entry.image }});'></div>
+      <div class="grid-text">{{ entry.title }}</div>
+      <div class="grid-price"><span class='money'>{{ entry.price*100 | money }}</span></div>
+      <div class="grid-needs">Needed x {{ entry.needs }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="cart-flyout">
+  <div class="cart-header">
+    <h4><a href='/pos/modify_registry/{{ registry.id }}'>Click to Modify Registry</a></h4>
+    <h2>Registry Cart</h2>
+    <h3>For Registry #{{ registry.id }}</h3>
+  </div>
+  <div class="cart-list">
+    
+  </div>
+</div>
+
+
+<script type='text/javascript'>
+ShopifyPOS.fetchCart({
+  success: function(cart) {
+    refreshCartList(cart, {{ registry.id }});
+    $('.grid-cell').click(function() {
+      var cell = this;
+      var name = $(cell).find(".grid-text").text().replace(/(^\s*|\s*$)/g, '');
+      var variantId = parseInt($(cell).attr('data-variant-id'));
+      var needed = parseInt($(cell).attr('data-needed'));
+      var properties = $(cell).attr('data-properties') ? JSON.parse($(cell).attr('data-properties')) : {};
+      var currentQuantity = 0;
+      
+      var oldRegistryId = null;
+      if (globalCart.line_items) {
+        for (var i = 0; i < globalCart.line_items.length; ++i) {
+          if (globalCart.line_items[i].variant_id == variantId && globalCart.line_items[i].properties) {
+            var registryIds = $.grep(globalCart.line_items[i].properties, function(e) { return e.name == 'registry_id' && e.value != {{ registry.id }}; });
+            if (registryIds.length > 0)
+            oldRegistryId = registryIds[0].value;
+            else
+            currentQuantity = globalCart.line_items[i].quantity;
+          }
+        }
+      }
+      if (
+        (!oldRegistryId || confirm("Due to a limitation of how Shopify has structured their POS system, you may not buy the same item off of two separate registries. If you add this to the cart, it will be added to registry #" + oldRegistryId + ". Is this OK?")) &&
+        ((currentQuantity + 1 <= needed) || confirm("You are about to add one more of these than is needed to fulfill the item on this particular registry. Are you sure you want to continue?"))
+      ) {
+        
+        cart.addLineItem({
+          variant_id: parseInt(variantId),
+          quantity: 1
+        }, {
+          success: function(cart) {
+            var requiresProperties = false;
+            for (var i = 0; i < cart.line_items.length; ++i) {
+              if (cart.line_items[i].variant_id == variantId && 
+                (!cart.line_items[i].properties || 
+                  cart.line_items[i].properties.length == 0 || 
+                  cart.line_items[i].properties.filter((prop) => {return prop.name == "registry_id"}).length == 0)
+                ) {
+                  requiresProperties = true;
+                  properties.registry_id = "{{ registry.id}}";
+                  cart.addLineItemProperties(i, properties, {
+                    success: function(cart) {
+                      refreshCartList(cart, {{ registry.id }});
+                      ShopifyPOS.flashNotice("Successfully added \"" + name + "\" to cart");
+                    },
+                    error: function() {
+                      ShopifyPOS.flashError("Failed to add to cart properly: " + JSON.stringify(errors))
+                    }
+                  });
+                }
+              }
+              if (!requiresProperties) {
+                refreshCartList(cart, {{ registry.id }});
+                ShopifyPOS.flashNotice("Successfully added \"" + name + "\" to cart");
+              }
+            },
+            error: function(errors) {
+              ShopifyPOS.flashError("Failed to add to cart: " + JSON.stringify(errors))
+            }
+          })
+        }
+      });
+    },
+    error: function(errors) {
+      alert("outer error");
+      ShopifyPOS.flashError("Failed to retrieve cart.")
+    }
+  });
+</script>
+
+
+{% include 'pos_footer' %}

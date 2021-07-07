@@ -1,0 +1,66 @@
+<script type='text/javascript'>
+var giftReggieCookieName = "giftreggie_session_cookie";
+// SIGH; IE8.
+if (!Object.keys) {
+	Object.keys = function(obj) {
+		var keys = [];
+
+		for (var i in obj) {
+			if (obj.hasOwnProperty(i)) {
+				keys.push(i);
+		}
+	}
+	return keys;
+	};
+}
+
+window.jqReady = [(function(jQuery) {
+	// Check to see if the actual URL matches the main domain. If it doesn't, throw up an alert.
+	{% if !testing and shop.settings.domain_integration != 'any' %}
+		if (window.location.hostname != "{{ shop.domain }}")
+			alert("You've entered Gift Reggie through " + window.location.hostname + ". For it to work properly you must enter through {{ shop.domain }}! Please redirect your links to there.");
+	{% endif %}
+})];
+</script>
+
+<script type='text/javascript' src="{{ external_hostline }}/{{ js_src }}/giftreggie.js"></script>
+<script type='text/javascript' src="{{ external_hostline }}/{{ js_src }}/common.js"></script>
+<script type='text/javascript'>
+	userSessionCookieName = giftReggieCookieName;
+	{% if testing %}
+		GiftReggie.serverLocation = '/mock/proxy';
+	{% endif %}
+</script>
+{% if customer_account_integration %}
+	{% include 'proxy_user' %}
+{% endif %}
+
+<script type='text/javascript'>
+	var displayModal;
+	window.jqReady.push(function(jQuery) {
+		(function( $ ) {
+			displayModal = function(text) {
+				var modal = $('<div class="giftreggie-modal" style="display:none; background: #FFF; font-size: 24px; line-height: 24px; border: 1px solid #000; padding: 12px; margin: auto; top: 0; bottom: 0; left: 0; right: 0; position: fixed; width: 320px; z-index: 1000;">\
+				<div class="giftreggie-modal-inner">\
+				<div class="giftreggie-modal-top">' + text + '</div>\
+				<div class="giftreggie-modal-bottom"><button style="margin: 8px auto; display: block; font-size: 18px; padding: 4px 8px;">OK</button></div></div></div>');
+				modal.appendTo('body');
+				modal.fadeIn();
+				modal.height(modal.children(".giftreggie-modal-inner").height());
+				var deferred = $.Deferred();
+				modal.find('button').click(function() { modal.fadeOut(400, function() { modal.remove(); }); deferred.resolve(); });
+				return deferred;
+			}
+			$(document).ready(function() {
+				var vars = getUrlVars();
+				var currentLanguage = "{{ shop.metafields.language_codes[cart.attributes['language']] }}";
+				if (currentLanguage && currentLanguage != "" && (!vars["lang"] || vars["lang"] != currentLanguage)) {
+					vars['lang'] = currentLanguage;
+					window.location = window.location.pathname + encodeUrlVars(vars);
+				}
+			});
+		})(jQuery);
+	});
+</script>
+
+{% include 'proxy_styling' %}
