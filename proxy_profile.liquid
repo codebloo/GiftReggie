@@ -10,7 +10,13 @@
 <form id='giftreggie-update-form' action="?" method="post" enctype="multipart/form-data">
 	{% include 'proxy_registry_info' %}
 	<div class="giftreggie-profile-buttons">
-		<input type='submit' value="{{ 'gift-reggie.registry-profile.update' | t }}"/>
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<input type='submit' class="button cta" value="{{ 'gift-reggie.registry-profile.update' | t }}"/>
+				</div>
+			</div>
+		</div>
 	</div>
 </form>
 <script type='text/javascript'>

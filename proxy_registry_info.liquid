@@ -1,172 +1,415 @@
 <div class="registry-profile">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">HEADER AREA</div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-            	<div class="registry-excerpt">
-			{%- comment -%}
-	Code for summary table
-	Shows registrant,co-registrant, created date, and event date as a 4x2 table
-	{%- endcomment -%}
-	<div class="giftreggie-registry-summary">
 	
+	<div class="registry-excerpt">
+		<div class="container">
+			<div class="row">
+				<div class="col-12 col-lg-8 offset-lg-2">
+            		<div class="dashboard-summary">
 		
-			<ul>
-		
-				<li>{{ event_datetime | date }} Your Big Day</li>
-		
-				<li>{{ item_count }} Gifts Added to your Registry</li>
-		
-			</ul>
-	
-		{%- comment -%}Mobile version of summary. Does not display as a table, but rather as paragraphs{%- endcomment -%}
-		<div class="giftreggie-mobile">
+							<div class="summary-item summary-date">
+								<i></i>
+								<div class="summary-text">
+								<span class="summary-title">{{ event_datetime | date }} </span>
+								<span class="summary-subtitle">until your big day</span>
+								</div>
+							</div>
+							<div class="summary-item summary-gifts">
+								<i></i>
+								<div class="summary-text">
+								<span class="summary-title"> 9 {{ item_count }} Gifts</span>
+								<span class="summary-subtitle">added to your registry</span>
+								</div>
+							</div>
+							<div class="summary-item summary-purchased">
+								<i></i>
+								<div class="summary-text">
+								<span class="summary-title">2 {{ item_count }} Gifts</span>
+								<span class="summary-subtitle">Purchased or Claimed</span>
+								</div>
+							</div>
 
-			<p>{{ 'gift-reggie.terms.registry_event_date' | t }}: {{ event_datetime | date }} Your Big Day</p>
-
-			<p>{{ 'gift-reggie.terms.items' | t }}: {{ item_count }} Gifts Added to your Registry</p>
-	
-		</div>
-	</div>
+					</div>
 		        </div>
-		</div>
+			</div>
         </div>
-        <div class="row">
-            <div class="col-12">NEXT STEPS BLOCKS</div>
-        </div>
-    <div class="row">
-        <div class="col-12">
-	<div class="registry-profile-block">
-	    	{% if allow_passwords %}
-	<div class="registry-profile-block">
-		<span>
-			<h4 class="h3"><input type='checkbox' id='registry-protection' {% if has_password %}checked{% endif %}> Make Registry Private</h4>
-			<p class="body1">{{ 'gift-reggie.registry-profile.protection.description' | t }}</p>
-			<div class="body1"><label>{{ 'gift-reggie.terms.password' | t }}</label> <input type='password' name='registry-password' placeholder='{{ 'gift-reggie.registry-profile.protection.blank' | t }}' {% unless has_password %}disabled{% endunless %} type='text'/></div>
-		</span>
-	</div>
-	{% endif %}
-	    
-		<h4 class="h3">{{ 'gift-reggie.registry-profile.title' | t }}</h4>
-		<p class="body1">
-			<span style="text-align:left;">{{ 'gift-reggie.terms.registry_title' | t }} <input name='registry-title' type='text' value='{{ name | escape_html }}'/></span>
-			{% assign input_format = datetime_format_input | replace: "%m", "MM" | replace: "%d", "DD" | replace: "%Y", "YYYY" | replace: "%y", "YY" %}
-			<span>{{ 'gift-reggie.terms.registry_event_date' | t }} ({{ input_format }}) <input name='event-date' class="datepicker" type='text' {% unless event_datetime %}placeholder="{{ input_format }}"{% endunless %} value='{{ event_datetime | date: datetime_format_input }}'/></span>
-		</p>
-		<p class="body1">
-			<span style="text-align: left;">{{ 'gift-reggie.registry-profile.public_message' | t }} <textarea name='registry-description'>{{ description | escape_html }}</textarea></span>
-			{% if event_types.size > 0 %}
-				<span style="vertical-align:top;">
-					{{ 'gift-reggie.terms.registry_event_type' | t }}
-					<select id="event-type" name='event-type' style="width: 100%;">
-						{% for type in event_types %}<option>{{ type.name | escape_html }}</option>{% endfor %}
-					</select>
-				</span>
-			{% endif %}
-		</p>
-		<p class="body1">
-			<span>{% if image %}<a target="_blank" href='{{ image }}'>{% endif %}{{ 'gift-reggie.terms.registry_image' | t }}{% if image %}</a>{% endif %} <input type='file' name='registry-image'> {% if image %}<button name='action' value='delete-image'>{{ 'gift-reggie.terms.registry_remove_image' | t }}</button>{% endif %}<p class="body1">{{ 'gift-reggie.registry-profile.max_size' | t }}</span>
-		</p>
-	</div>
-	<div class="registry-profile-block">
-	    
-		<span>
-			<h4 class="h3">{{ 'gift-reggie.registry-profile.registrant_info' | t }}</h4>
-			<p class="body1">{{ 'gift-reggie.terms.title' | t }} <input name='registrant-title' type='text' maxlength="16" value="{{ registrant_title | escape_html }}" class="body1"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.first_name' | t }} <input name='registrant-first' type='text' {% unless registrant_first %}placeholder="{{ customer.first_name }}"{% endunless %} value="{% if registrant_first %}{{ registrant_first | escape_html }}{% else %}{{ customer.first_name }}{% endif %}"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.last_name' | t }} <input name='registrant-last' type='text' {% unless registrant_last %}placeholder="{{ customer.last_name }}"{% endunless %} value="{% if registrant_last %}{{ registrant_last | escape_html }}{% else %}{{ customer.last_name }}{% endif %}"/></p>
-		</span>
-		<span>
-			<h4 class="h3">{{ 'gift-reggie.registry-profile.coregistrant_info' | t }}</h4>
-			<p class="body1">{{ 'gift-reggie.terms.title' | t }} <input name='coregistrant-title' type='text' maxlength="16" value="{{ coregistrant_title | escape_html }}"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.first_name' | t }} <input name='coregistrant-first' type='text' value="{{ coregistrant_first | escape_html }}"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.last_name' | t }} <input  name='coregistrant-last' type='text' value="{{ coregistrant_last | escape_html }}"/></p>
-		</span>
 	</div>
 
-	<div class="registry-profile-block">
-		<h4 class="h3">{{ 'gift-reggie.registry-profile.contact_info' | t }}</h4>
-		<span>
-			<p class="body1">{{ 'gift-reggie.terms.address' | t }} <input name='contact-address' type='text' value="{{ contact_address | escape_html }}"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.city' | t }} <input name='contact-city' type='text' value="{{ contact_city | escape_html }}"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.province' | t }} <input name='contact-province' type='text' value="{{ contact_province | escape_html }}"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.country' | t }} <select class='country-selector' name='contact-country'>{% include 'proxy_countries' %}</select></p>
-			<p class="body1">{{ 'gift-reggie.terms.zip' | t }} <input name='contact-postal' type='text' value="{{ contact_postal | escape_html }}"/></p>
-		</span>
-		<span>
-			<p class="body1">{{ 'gift-reggie.terms.daytime_telephone' | t }} <input name='contact-daytime' type='text' value="{{ contact_daytime | escape_html }}"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.evening_telephone' | t }} <input name='contact-evening' type='text' value="{{ contact_evening | escape_html }}"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.email' | t }} <input name='contact-email' type='text' placeholder="{{ customer.email }}" value="{% if contact_email %}{{ contact_email | escape_html }}{% else %}{{ customer.email }}{% endif %}"/></p>
-			<p class="body1">{{ 'gift-reggie.terms.verify_email' | t }} <input type='text' placeholder="{{ customer.email }}" value="{% if contact_email %}{{ contact_email | escape_html }}{% else %}{{ customer.email }}{% endif %}"/></p>
-		</span>
-		<p class="body1">{{ 'gift-reggie.registry-profile.how_did_you_hear' | t }} <select id='about-type' name='about-type'>
-			{% unless about_required %}<option>N/A</option>{% endunless %}
-			{% for type in about_types %}
-				<option>{{ type.name | escape_html }}</option>
-			{% endfor %}
-		</select></p>
-	</div>
-	{% if allow_pickup %}
-		<div class="registry-profile-block">
-			<p class="body1">
-				<select id='store-pickup' name='store-pickup'>
-					<option value='0'>{{ 'gift-reggie.registry-profile.ship_items' | t }}</option>
-					<option value='1' {% if in_store_pickup %}selected{% endif %}>{{ 'gift-reggie.registry-profile.pickup_items' | t }}</option>
-				</select>
-			<p class="body1">
-		</div>
-	{% elsif force_pickup %}
-		<input type='hidden' name='store-pickup' value='1'/>
-	{% endif %}
-	{% unless force_pickup %}
-	<div class="registry-profile-block">
-        <p class="body1">
-            When would you like registry items shipped?
-                <select name="extra_selector" id="extra_selector" onchange='checkvalue(this.value)'> 
-                    <option selected="selected" value="Ship items as they are ordered">Ship items as they are ordered</option>
-                    <option value="Ship items for the event date">Ship items for the event date</option>
-                    <option value="other">Ship items for this date:</option>
-                </select> 
-                <input name="extra" id="extra" style='display:none; width: 30%' value="Ship items as they are ordered"/>
-        <p class="body1">
-	</div>
-	{% endunless %}
-	{% unless force_pickup %}
-		<div class="registry-profile-block">
-			<h4 class="h3">{{ 'gift-reggie.registry-profile.shipping_info' | t }}</h4>
-			<span>
-				<p class="body1">{{ 'gift-reggie.registry-profile.before_title' | t }} <select {% if in_store_pickup %}disabled{% endif %} id="before-shipping-selector">
-					<option value='above'>{{ 'gift-reggie.terms.above' | t }}</option>
-					<option value='below' {% if before_address %}selected{% endif %}>{{ 'gift-reggie.terms.below' | t }}</option>
-				</select></p>
-				<div class="before-shipping">
-					<p class="body1">{{ 'gift-reggie.terms.address' | t }} <input name='before-address' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless before_address %}disabled{% endunless %} value="{{ before_address | escape_html }}"/></p>
-					<p class="body1">{{ 'gift-reggie.terms.city' | t }} <input name='before-city' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless before_address %}disabled{% endunless %} value="{{ before_city | escape_html }}"/></p>
-					<p class="body1">{{ 'gift-reggie.terms.province' | t }} <input name='before-province' {% if in_store_pickup %}disabled{% endif %}  type='text' {% unless before_address %}disabled{% endunless %} value="{{ before_province | escape_html }}"/></p>
-					<p class="body1">{{ 'gift-reggie.terms.country' | t }} <select name='before-country' class='country-selector' {% if in_store_pickup %}disabled{% endif %} {% unless before_address %}disabled{% endunless %}>{% include 'proxy_countries' %}</select></p>
-					<p class="body1">{{ 'gift-reggie.terms.zip' | t }} <input name='before-postal' {% if in_store_pickup %}disabled{% endif %} type='text' {% unless before_address %}disabled{% endunless %} value="{{ before_postal | escape_html }}"/></p>
+	<div class="registry-quicklinks">
+		<div class="container">
+			<div class="row">
+	            <div class="col-12">
+					<h2 class="quicklinks-title">Next Steps</h2>
 				</div>
-			</span>
-			<span>
-				<p class="body1">{{ 'gift-reggie.registry-profile.after_title' | t }} <select {% if in_store_pickup %}disabled{% endif %} id="after-shipping-selector">
-					<option value='above'>{{ 'gift-reggie.terms.above' | t }}</option>
-					<option value='below' {% if after_address %}selected{% endif %}>{{ 'gift-reggie.terms.below' | t }}</option>
-				</select></p>
-				<div class="after-shipping">
-					{{ 'gift-reggie.terms.address' | t }} <input name='after-address' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_address | escape_html }}"/></p>
-					<p class="body1">{{ 'gift-reggie.terms.city' | t }} <input name='after-city' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_city | escape_html }}"/></p>
-					<p class="body1">{{ 'gift-reggie.terms.province' | t }} <input name='after-province' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_province | escape_html }}"/></p>
-					<p class="body1">{{ 'gift-reggie.terms.country' | t }} <select name='after-country' class='country-selector' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %}>{% include 'proxy_countries' %}</select></p>
-					<p class="body1">{{ 'gift-reggie.terms.zip' | t }} <input name='after-postal' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_postal | escape_html }}"/></p>
+			</div>
+			<div class="row">
+	            <div class="col-12">
+					<div class="dashboard-quicklinks">
+						<div class="quick-link shipping-address">
+							<a href="#shippingAddress">
+								<div class="quick-icon">
+									<i class="icon-address"></i>
+								</div>
+								<div class="quick-text">Add Your Shipping Address</div>
+							</a>
+						</div>
+						<div class="quick-link bank-details">
+							<a href="#">
+								<div class="quick-icon">
+									<i class="icon-bank"></i>
+								</div>
+								<div class="quick-text">Edit Bank Details</div>
+							</a>
+							<i class="js-bank-tooltip bank-tooltip"></i>
+						</div>
+						<div class="quick-link partner-info">
+							<a href="#partnerInfo">
+								<div class="quick-icon">
+									<i class="icon-bed"></i>
+								</div>
+								<div class="quick-text">Add Partner Info</div>
+							</a>
+						</div>
+						<div class="quick-link champagne-registry">
+							<a href="{{ proxy_url }}/registry/{{ id }}">
+								<div class="quick-icon">
+									<i class="icon-champagne"></i>
+								</div>
+								<div class="quick-text">Share Registry</div>
+							</a>
+						</div>
+						<div class="quick-link edit-details">
+							<a href="#weddingDetails">
+								<div class="quick-icon">
+									<i class="icon-edit"></i>
+								</div>
+								<div class="quick-text">Edit Wedding Details</div>
+							</a>
+						</div>
+					</div>
+				 </div>
+        	 </div>
+		 </div>
+	 </div>
+	 
+ 	<div class="registry-dashboard">
+ 		<div class="container">
+ 			{% if allow_passwords %}
+ 			<div class="row">
+ 				<div class="col-12 col-lg-6">
+ 					<div class="make-private">
+ 						<div class="private-header">
+ 						<input type='checkbox' id='registry-protection' {% if has_password %}checked{% endif %}>
+ 						<h3 class="dashboard-form-title">Make Registry Private</h3>
+ 					</div>
+ 						<p class="dashboard-text">{{ 'gift-reggie.registry-profile.protection.description' | t }}</p>
+ 						<div class="dashboard-input-group">
+ 						<label class="dashboard-label">{{ 'gift-reggie.terms.password' | t }}</label> 
+ 						<input type='password' 
+ 						name='registry-password' 
+ 						class="dashboard-input big-input"
+ 						placeholder='{{ 'gift-reggie.registry-profile.protection.blank' | t }}' {% unless has_password %}disabled{% endunless %} 
+ 						type='text'/>
+ 					</div>
+ 					</div>
+ 				</div>
+ 			</div>
+ 			{% endif %}
+ 		<div class="row">
+ 			<div class="col-12">
+				<div class="wedding-details" id="weddingDetails">
+					<h3 class="dashboard-form-title">{{ 'gift-reggie.registry-profile.title' | t }}</h3>
+					<div class="row">
+						<div class="col-12 col-lg-8">
+							<div class="dashboard-input-group">
+								<label class="dashboard-label">{{ 'gift-reggie.terms.registry_title' | t }}</label>
+								<input name='registry-title' type='text' class="dashboard-input big-input" value='{{ name | escape_html }}'/>
+							</div>
+						</div>
+						<div class="col-12 col-lg-4">
+	   						<div class="dashboard-input-group">
+	   						{% assign input_format = datetime_format_input | replace: "%m", "MM" | replace: "%d", "DD" | replace: "%Y", "YYYY" | replace: "%y", "YY" %}
+	   						<label class="dashboard-label">{{ 'gift-reggie.terms.registry_event_date' | t }}({{ input_format }})</label> 
+	   						 <input name='event-date' class="datepicker dashboard-input big-input" type='text' {% unless event_datetime %}placeholder="{{ input_format }}"{% endunless %} value='{{ event_datetime | date: datetime_format_input }}'/>
+	   					 </div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+								<div class="dashboard-input-group">
+									<label class="dashboard-label">{{ 'gift-reggie.registry-profile.public_message' | t }}</label> 
+								<textarea name='registry-description' class="dashboard-input">{{ description | escape_html }}</textarea></>
+							</div>
+						</div>
+					</div>
+					{% if event_types.size > 0 %}
+						<div class="row">
+							<div class="col-12 col-lg-6">
+								<div class="dashboard-input-group">
+									<label class="dashboard-label">{{ 'gift-reggie.terms.registry_event_type' | t }}</label>
+									<select class="dashboard-input" id="event-type" name='event-type' style="width: 100%;">
+										{% for type in event_types %}<option>{{ type.name | escape_html }}</option>{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+						{% endif %}
+						
+						<div class="row">
+							<div class="col-12 col-lg-6">
+								
+									<input type='file' name='registry-image' class="dashboard-input big-input" /> 
+									
+									 <p class="dashboard-text max-size">{{ 'gift-reggie.registry-profile.max_size' | t }}</p>
+							</div>
+							{% if image %}
+					
+								<div class="col-12 col-lg-6">
+									<h3 class="dashboard-form-title">Current Image</h3>
+									<a target="_blank" href='{{ image }}' class="current-image">
+										<img src="{{ image }}" alt="registry image" />
+									</a>
+									<button name='action' value='delete-image' class="cta button">
+										{{ 'gift-reggie.terms.registry_remove_image' | t }}
+									</button>
+								</div>
+							
+				
+							{% endif %}
+						
+						</div>
+					
 				</div>
-			</span>
-		</div>
-		</div>
-    </div>
-</div>
-	{% endunless %}
+			</div>
+ 		</div>
+ 		<div class="row">
+ 			<div class="col-12">
+				<div class="registrant-info">
+					<h3 class="dashboard-form-title">{{ 'gift-reggie.registry-profile.registrant_info' | t }}</h3>
+					<div class="row">
+						<div class="col-12 col-lg-6">
+							<div class="registrant-box">
+							
+								<div class="dashboard-input-group">
+									<label class="dashboard-label">{{ 'gift-reggie.terms.title' | t }}</label>
+									 <input class="dashboard-input title-input" name='registrant-title' type='text' maxlength="16" value="{{ registrant_title | escape_html }}" class="body1"/>
+								</div>
+								<div class="dashboard-input-group">
+									<label class="dashboard-label">{{ 'gift-reggie.terms.first_name' | t }}</label>
+										 <input  class="dashboard-input" name='registrant-first' type='text' {% unless registrant_first %}placeholder="{{ customer.first_name }}"{% endunless %} value="{% if registrant_first %}{{ registrant_first | escape_html }}{% else %}{{ customer.first_name }}{% endif %}"/>
+								</div>
+								<div class="dashboard-input-group">
+									<label class="dashboard-label">{{ 'gift-reggie.terms.last_name' | t }}</label>
+										<input  class="dashboard-input" name='registrant-last' type='text' {% unless registrant_last %}placeholder="{{ customer.last_name }}"{% endunless %} value="{% if registrant_last %}{{ registrant_last | escape_html }}{% else %}{{ customer.last_name }}{% endif %}"/>
+								</div>
+							
+							</div>
+						</div>
+						<div class="col-12 col-lg-6">
+							<div class="registrant-box" id="partnerInfo">
+								
+								<div class="dashboard-input-group">
+									<label class="dashboard-label">{{ 'gift-reggie.terms.title' | t }}</label>
+									<input  class="dashboard-input title-input" name='coregistrant-title' type='text' maxlength="16" value="{{ coregistrant_title | escape_html }}"/>
+								</div>
+								<div class="dashboard-input-group">
+									<label class="dashboard-label">{{ 'gift-reggie.terms.first_name' | t }}</label>
+									<input  class="dashboard-input" name='coregistrant-first' type='text' value="{{ coregistrant_first | escape_html }}"/>
+								</div>
+								<div class="dashboard-input-group">
+									<label class="dashboard-label">{{ 'gift-reggie.terms.last_name' | t }}</label>
+									<input   class="dashboard-input" name='coregistrant-last' type='text' value="{{ coregistrant_last | escape_html }}"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+ 		</div>
+ 		<div class="row">
+ 			<div class="col-12">
+				<div class="contact-info">
+					<h3 class="dashboard-form-title">{{ 'gift-reggie.registry-profile.contact_info' | t }}</h3>
+	       		 	<div class="row">
+	   		 		<div class="col-12">
+	   					<div class="dashboard-input-group">
+	   						<label class="">{{ 'gift-reggie.terms.address' | t }}</label> 
+	   						<input name='contact-address' class="dashboard-input" type='text' value="{{ contact_address | escape_html }}"/>
+	   					</div>
+	   		 		</div>
+	       		 </div>
+	   			  	<div class="row">
+	   			  	<div class="col-12 col-lg-3">
+	   					<div class="dashboard-input-group">
+	   						<label class="dashboard-label">{{ 'gift-reggie.terms.city' | t }}</label> 
+	   						<input name='contact-city' class="dashboard-input" type='text' value="{{ contact_city | escape_html }}"/>
+	   					</div>
+	   				</div>
+	   				<div class="col-12 col-lg-3">
+	   					<div class="dashboard-input-group">
+	   						<label class="dashboard-label">{{ 'gift-reggie.terms.province' | t }}</label> 
+	   						<input name='contact-province' class="dashboard-input" type='text' value="{{ contact_province | escape_html }}"/>
+	   					</div>
+	   				</div>
+	   				<div class="col-12 col-lg-3">
+	   					<div class="dashboard-input-group">
+	   						<label class="dashboard-label">{{ 'gift-reggie.terms.zip' | t }}</label> 
+	   						<input name='contact-postal' class="dashboard-input" type='text' value="{{ contact_postal | escape_html }}"/>
+	   					</div>
+	   				</div>
+	   				<div class="col-12 col-lg-3">
+	   					<div class="dashboard-input-group">
+	   						<label class="dashboard-label">{{ 'gift-reggie.terms.country' | t }}</label> 
+	   						<select class="country-selector dashboard-input" name='contact-country'>{% include 'proxy_countries' %}</select>
+	   					</div>
+	   				</div>
+	   			  </div>
+	   			   <div class="row">
+	   				   <div class="col-12 col-lg-4">
+	   						<div class="dashboard-input-group">
+	   							<label class="dashboard-label">{{ 'gift-reggie.terms.daytime_telephone' | t }}</label> 
+	   							 <input name='contact-daytime' class="dashboard-input" type='text' value="{{ contact_daytime | escape_html }}"/>
+	   						 </div>
+	   				   </div>
+	   				   <div class="col-12 col-lg-4">
+	   						 <div class="dashboard-input-group">
+	   								<label class="dashboard-label">{{ 'gift-reggie.terms.email' | t }}</label> 
+	   								<input name='contact-email' class="dashboard-input" type='text' placeholder="{{ customer.email }}" value="{% if contact_email %}{{ contact_email | escape_html }}{% else %}{{ customer.email }}{% endif %}"/>
+	   						</div>
+	   				   </div>
+	   				   <div class="col-12 col-lg-4">
+	   						<div class="dashboard-input-group">
+	   								<label class="dashboard-label">{{ 'gift-reggie.terms.verify_email' | t }}</label> 
+	   								<input type='text' class="dashboard-input" placeholder="{{ customer.email }}" value="{% if contact_email %}{{ contact_email | escape_html }}{% else %}{{ customer.email }}{% endif %}"/>
+	   						</div>
+	   				   </div>
+	   			   </div>
+	   			 	<div class="row">
+		   				<div class="col-12">
+		   					 <div class="dashboard-input-group">
+			   						 <label class="dashboard-label">{{ 'gift-reggie.registry-profile.how_did_you_hear' | t }}</label>
+	   						 <select id='about-type' name='about-type' class="dashboard-input">
+	   							{% unless about_required %}<option>N/A</option>{% endunless %}
+	   							{% for type in about_types %}
+	   								<option>{{ type.name | escape_html }}</option>
+	   							{% endfor %}
+	   							</select>	 
+			   				 </div>
+						 </div>
+					 </div>
+				 </div>
+			 </div>
+ 		</div>
+		
+	
+		
+		{% unless force_pickup %}
+ 		<div class="row">
+ 			<div class="col-12">
+				<div class="shipping-prefs">
+					<h3 class="dashboard-form-title">Shipping Preferences</h3>
+					{% if allow_pickup %}
+					<div class="preferences-group">
+						<p class="dashboard-text">How would you like to receive your gifts?</p>
+					
+								<select id='store-pickup' name='store-pickup' class="dashboard-input">
+									<option value='0'>{{ 'gift-reggie.registry-profile.ship_items' | t }}</option>
+									<option value='1' {% if in_store_pickup %}selected{% endif %}>{{ 'gift-reggie.registry-profile.pickup_items' | t }}</option>
+								</select>
+					</div>
+					{% elsif force_pickup %}
+						<input type='hidden' name='store-pickup' value='1'/>
+					{% endif %}
+					<div class="preferences-group">
+						<p class="dashboard-text">When would you like registry items shipped?</p>
+						<select class="dashboard-input" name="extra_selector" id="extra_selector" onchange='checkvalue(this.value)'> 
+							<option selected="selected" 
+									value="Ship items as they are ordered">Ship items as they are ordered</option>
+							 <option value="Ship items for the event date">Ship items for the event date</option>
+							 <option value="other">Ship items for this date:</option>
+						 </select> 
+						 <input 
+						 	name="extra" 
+						 	id="extra" 
+						 	style='display:none; width: 30%' value="Ship items as they are ordered"/>
+					</div>
+				</div>
+			</div>
+ 		</div>
+		{% endunless %}
+		{% unless force_pickup %}
+ 		<div class="row">
+ 			<div class="col-12">
+				<div class="gift-shipping" id="shippingAddress">
+					<h3 class="dashboard-form-title">{{ 'gift-reggie.registry-profile.shipping_info' | t }}</h3>
+						<div class="row">
+							<div class="col-12 col-lg-6">
+								<div class="before-shipping">
+									<div class="preferences-group">
+										<p class="dashboard-text">{{ 'gift-reggie.registry-profile.before_title' | t }} </p>
+											<select {% if in_store_pickup %}disabled{% endif %} id="before-shipping-selector" class="dashboard-input">
+											<option value='above'>{{ 'gift-reggie.terms.above' | t }}</option>
+											<option value='below' {% if before_address %}selected{% endif %}>{{ 'gift-reggie.terms.below' | t }}</option>
+										</select>
+										
+									</div>
+									<div class="dashboard-input-group">
+											<label class="dashboard-label">{{ 'gift-reggie.terms.address' | t }}</label>
+											 <input class="dashboard-input" name='before-address' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless before_address %}disabled{% endunless %} value="{{ before_address | escape_html }}"/></div>
+									<div class="dashboard-input-group">
+											<label class="dashboard-label">{{ 'gift-reggie.terms.city' | t }}</label> 
+											<input class="dashboard-input" name='before-city' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless before_address %}disabled{% endunless %} value="{{ before_city | escape_html }}"/></div>
+									<div class="dashboard-input-group">
+											<label class="dashboard-label">{{ 'gift-reggie.terms.province' | t }}</label> 
+											<input class="dashboard-input" name='before-province' {% if in_store_pickup %}disabled{% endif %}  type='text' {% unless before_address %}disabled{% endunless %} value="{{ before_province | escape_html }}"/></div>
+									<div class="dashboard-input-group">
+											<label class="dashboard-label">{{ 'gift-reggie.terms.country' | t }}</label> 
+											<select class="dashboard-input" name='before-country' class='country-selector' {% if in_store_pickup %}disabled{% endif %} {% unless before_address %}disabled{% endunless %}>{% include 'proxy_countries' %}</select></div>
+									<div class="dashboard-input-group">
+											<label class="dashboard-label">{{ 'gift-reggie.terms.zip' | t }}</label> 
+											<input class="dashboard-input" name='before-postal' {% if in_store_pickup %}disabled{% endif %} type='text' {% unless before_address %}disabled{% endunless %} value="{{ before_postal | escape_html }}"/></div>
+								
+								</div>
+							</div>
+							<div class="col-12 col-lg-6">
+								<div class="after-shipping">
+									<div class="preferences-group">
+										<p class="dashboard-text">{{ 'gift-reggie.registry-profile.after_title' | t }}</p>
+									    <select {% if in_store_pickup %}disabled{% endif %} id="after-shipping-selector" class="dashboard-input">
+									   					<option value='above'>{{ 'gift-reggie.terms.above' | t }}</option>
+									   					<option value='below' {% if after_address %}selected{% endif %}>{{ 'gift-reggie.terms.below' | t }}</option>
+									   				</select>
+									</div>
+									<div class="dashboard-input-group">
+											<label class="dashboard-label">{{ 'gift-reggie.terms.address' | t }}</label> 
+											<input class="dashboard-input" name='after-address' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_address | escape_html }}"/></div>
+									<div class="dashboard-input-group">
+					   								<label class="dashboard-label">{{ 'gift-reggie.terms.city' | t }}</label> 
+													<input class="dashboard-input" name='after-city' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_city | escape_html }}"/></div>
+									<div class="dashboard-input-group">
+					   								<label class="dashboard-label">{{ 'gift-reggie.terms.province' | t }}</label> 
+													<input class="dashboard-input" name='after-province' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_province | escape_html }}"/></div>
+									<div class="dashboard-input-group">
+					   								<label class="dashboard-label">{{ 'gift-reggie.terms.country' | t }}</label> 
+													<select class="dashboard-input" name='after-country' class='country-selector' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %}>{% include 'proxy_countries' %}</select
+													></div>
+									<div class="dashboard-input-group">
+					   								<label class="dashboard-label">{{ 'gift-reggie.terms.zip' | t }}</label> 
+													<input class="dashboard-input" name='after-postal' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_postal | escape_html }}"/></div>
+								</div>
+							</div>
+						</div>
+				</div>
+			</div>
+ 		</div>
+		{% endunless %}
+
+ 		</div>
+ 	</div>
+	 
+	
+	
+	
+	
 </div>
 <script>
     function checkvalue(val){

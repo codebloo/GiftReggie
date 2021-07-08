@@ -1,14 +1,14 @@
 {% include 'proxy_header' %}
 
-<div class="giftreggie-front giftreggie-admin giftreggie-registry {% if is_admin %}giftreggie-manager{% else %}giftreggie-guest{% endif %} giftreggie-theme-{{ theme.name | handleize }}">
+<div class="giftreggie-front giftreggie-admin {% if is_admin %}giftreggie-manager{% else %}giftreggie-guest{% endif %} giftreggie-theme-{{ theme.name | handleize }}">
 	<div class="giftreggie-header">
 	  
 		
 		{% if is_admin %}
 		<div class="registry-header d-none d-lg-block">
-        <div class="container">
-          <div class="row">
-            <div class="col-12">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
                <ul class="registry-nav">
              
               
@@ -41,9 +41,7 @@
                 </li>
               {% endif %}
             </ul>
-             
-           
-  	</div>
+				</div>
 		
 			<script type='text/javascript'>
 				window.jqReady.push(function(jQuery) {
@@ -104,3 +102,4 @@
 				})(jQuery);
 			});
 		</script>
+

@@ -1,73 +1,54 @@
+<div class="manage-registry-header">
+    <div class="container">
+		<div class="row no-gutters manage-registry-layout">
+			{% if image %}
+			<div class="col-12 col-lg-3">
+				<div class="manage-registry-photo" style="background-image:url({{ image }});">
+				<img src='{{ image }}' alt="{{ registrant | escape_html }}{% if coregistrant %} & {{ coregistrant | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Photo"/>
+			</div>
+			</div>
+			{% endif %}	
+			<div class="{% if image %}col-12 col-lg-7{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
+					<div class="registry-header-details">
+						<h2 class="registry-title">{{ registrant | escape_html }}{% if coregistrant %} & {{ coregistrant | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Registry</h2>
+						
+						<div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
+					
+						
+						{% if message %}
+							<div class="giftreggie-store-message registry-title-event-message">{{ message | escape_html | newline_to_br }}</div>
+						{% endif %}
+						{% if description %}
+							<div class="giftreggie-description registry-title-event-message">
+								{{ description | escape_html | newline_to_br }}
+							</div>
+						{% endif %}
+						<div class="giftreggie-edit-description">
+							<button>{{ 'gift-reggie.registry.edit_message' | t }}</button>
+						</div>
+				
+				
+						
+						<div class="registry-title-url">
+							<label class="registry-title-link-label">Registry Link:</label> 
+							<span>https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}</span>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+</div>
+
+
 {% if products.size == 0 %}
 	<div class="giftreggie-no-products">{{ 'gift-reggie.wishlist.no_products' | t }} {% if is_admin %}<a href='{{ browsing_link }}'>Start by Adding Gifts</a>{% endif %}</div>
 {% endif %}
 
-{%- comment -%}
-Grid display is not very friendly for admin management, so the table layout is used instead.
-Essentially just a copy of the default template with non-admin options stripped out. 
-{%- endcomment -%}
-{% if is_admin %}
-	{%- comment -%}
-	Code for top banner
-	Dispays registry title, image, and description
-	{%- endcomment -%}
-	<div class="giftreggie-band">
-		<h2 class="giftreggie-registry-title">{{ name | escape_html }}</h2>
-		{% if type and type != "N/A" %}<h3 class="giftreggie-registry-type">{{ type | escape_html }}</h3>{% endif %}
-		{% if image %}<div class="giftreggie-registry-image"><img src='{{ image }}'/></div>{% endif %}
-		{% if message %}
-			<div class="giftreggie-store-message">{{ message | escape_html | newline_to_br }}</div>
-		{% endif %}
-		{% if description %}<div class="giftreggie-description">{{ description | escape_html | newline_to_br }}</div>{% endif %}
-		<div class="giftreggie-edit-description">
-			<button>{{ 'gift-reggie.registry.edit_message' | t }}</button>
-		</div>
-	</div>
 
-	{%- comment -%}
-	Code for summary table
-	Shows registrant,co-registrant, created date, and event date as a 4x2 table
-	{%- endcomment -%}
-	<div class="giftreggie-registry-summary">
-		<table class="giftreggie-desktop">
-			<tr>
-				<th>{{ 'gift-reggie.terms.registry_registrant' | t }}</th>
-				<th>{{ 'gift-reggie.terms.registry_coregistrant' | t }}</th>
-				<th>{{ 'gift-reggie.terms.created' | t }}</th>
-				<th>{{ 'gift-reggie.terms.registry_event_date' | t }}</th>
-				<th>{{ 'gift-reggie.terms.status' | t }}</th>
-				<th>{{ 'gift-reggie.terms.items' | t }}</th>
-				{% assign value_bool = 1 %}
-				{% for product in products %}
-					{% for p in product.properties %}
-						{% if p.name contains '_boldVariantIds' %}
-							{% assign value_bool = 0 %}
-						{% endif %}
-					{% endfor %}
-				{% endfor %}
-				{% if value_bool %}<th>{{ 'gift-reggie.terms.value' | t }}</th>{% endif %}
-			</tr>
-			<tr>
-				<td>{{ registrant | escape_html }}</td>
-				<td>{% if coregistrant %}{{ coregistrant | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}</td>
-				<td>{{ created_datetime | date }}</td>
-				<td>{{ event_datetime | date }}</td>
-				<td>{{ status }}</td>
-				<td>{{ item_count }}</td>
-				{% if value_bool %}<td><span class='money'>{{ value | money }}</span></td>{% endif %}
-			</tr>
-		</table>
-		{%- comment -%}Mobile version of summary. Does not display as a table, but rather as paragraphs{%- endcomment -%}
-		<div class="giftreggie-mobile">
-			<p>{{ 'gift-reggie.terms.registry_registrant' | t }}: {{ registrant | escape_html }}</p>
-			<p>{% if coregistrant %}{{ 'gift-reggie.terms.registry_coregistrant' | t }}: {{ coregistrant | escape_html }}{% endif %}</p>
-			<p>{{ 'gift-reggie.terms.created' | t }}: {{ created_datetime | date }}</p>
-			<p>{{ 'gift-reggie.terms.registry_event_date' | t }}: {{ event_datetime | date }}</p>
-			<p>{{ 'gift-reggie.terms.status' | t }}: {{ status }}</p>
-			<p>{{ 'gift-reggie.terms.items' | t }}: {{ item_count }}</p>
-			<p>{{ 'gift-reggie.terms.value' | t }}: <span class='money'>{{ value | money }}</span></p>
-		</div>
-	</div>
+
+
+{% if is_admin %}
+
 	{%- comment -%}
 	Code for displaying product table
 	Each product is a row containing 
