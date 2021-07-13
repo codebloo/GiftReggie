@@ -1,5 +1,55 @@
 <div class="registry-profile">
-	
+	{% if is_admin %}
+	<div class="manage-registry-header">
+	    <div class="container">
+			<div class="row no-gutters manage-registry-layout">
+				{% if image %}
+				<div class="col-12 col-lg-3">
+					<div class="manage-registry-photo" style="background-image:url({{ image }});">
+					<img src='{{ image }}' alt="{{ registrant_first | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Photo"/>
+				</div>
+				</div>
+				{% endif %}	
+				<div class="{% if image %}col-12 col-lg-9{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
+						<div class="registry-header-details">
+							<h2 class="registry-title">{% if coregistrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s{% else %}Your{% endif %} Registry</h2>
+						
+							<div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
+					
+						
+							{% if message %}
+								<div class="giftreggie-store-message registry-title-event-message">{{ message | escape_html | newline_to_br }}</div>
+							{% endif %}
+							{% if description %}
+								<div class="giftreggie-description registry-title-event-message">
+									{{ description | escape_html | newline_to_br }}
+								</div>
+							{% endif %}
+							{% if is_admin%}
+							<div class="reigstry-description-edit">
+								<a href="{{ proxy_url }}/registry/{{ id }}/profile#weddingDetails" class="registry-title-edit">{{ 'gift-reggie.registry.edit_message' | t }}</a>
+							</div>
+							{% endif %}
+				
+				
+						
+							<div class="registry-title-url">
+								<label class="registry-title-link-label">Registry Link:</label> 
+								<span class="link-text">https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}</span>
+								<div class="copy-link js-copy-link mini-button" rel="https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}">
+									<span class="mini-button-text">Copy Link</span>
+								</div>
+								<div class="share-link">
+									<a href="{{ proxy_url }}/registry/{{ id }}/share" class="mini-button">
+										<span class="mini-button-text">Share Link</span>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+			</div>
+		</div>
+	</div>
 	<div class="registry-excerpt">
 		<div class="container">
 			<div class="row">
@@ -16,14 +66,20 @@
 							<div class="summary-item summary-gifts">
 								<i></i>
 								<div class="summary-text">
-								<span class="summary-title"> 9 {{ item_count }} Gifts</span>
+								<span class="summary-title"> 
+									{% assign count = 0 %}
+									{% for product in products %}
+									{% assign count = product.wants + count %}
+										{{count}}
+									{% endfor %}
+									 Gifts</span>
 								<span class="summary-subtitle">added to your registry</span>
 								</div>
 							</div>
 							<div class="summary-item summary-purchased">
 								<i></i>
 								<div class="summary-text">
-								<span class="summary-title">2 {{ item_count }} Gifts</span>
+								<span class="summary-title">Gifts</span>
 								<span class="summary-subtitle">Purchased or Claimed</span>
 								</div>
 							</div>
@@ -33,14 +89,15 @@
 			</div>
         </div>
 	</div>
-
 	<div class="registry-quicklinks">
 		<div class="container">
+			
 			<div class="row">
 	            <div class="col-12">
 					<h2 class="quicklinks-title">Next Steps</h2>
 				</div>
 			</div>
+			
 			<div class="row">
 	            <div class="col-12">
 					<div class="dashboard-quicklinks">
@@ -58,8 +115,16 @@
 									<i class="icon-bank"></i>
 								</div>
 								<div class="quick-text">Edit Bank Details</div>
+								
 							</a>
-							<i class="js-bank-tooltip bank-tooltip"></i>
+							<i class="js-bank-tooltip bank-tooltip">
+								<div class="bank-tool-tip">
+									<h4 class="h5 bank-tool-tip-title">Your Bank Account Details</h4>
+									<p class="bank-tool-tip-text">(only applicable to US checking accounts).  If you are adding Cash Funds to your registry, we need to know how to transfer the money to you.</p>
+								</div>
+								
+							</i>
+							
 						</div>
 						<div class="quick-link partner-info">
 							<a href="#partnerInfo">
@@ -88,8 +153,11 @@
 					</div>
 				 </div>
         	 </div>
-		 </div>
-	 </div>
+			 
+	 	</div>
+ 	</div>
+	 
+	 {% endif %}
 	 
  	<div class="registry-dashboard">
  		<div class="container">

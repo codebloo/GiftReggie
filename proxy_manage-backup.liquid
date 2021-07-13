@@ -1,0 +1,72 @@
+{% include 'proxy_header' %}
+<div class="giftreggie-front giftreggie-create giftreggie-theme-{{ theme.name | handleize }}">
+	<div class="giftreggie-header">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<h3 class="h1">{{ 'gift-reggie.manage-registries.title' | t }}</h3>
+					<p class="body1">{{ 'gift-reggie.manage-registries.description' | t }}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="giftreggie-body">
+		<div class="manage-registries">
+      <div class="container">
+		 
+  		  {% if customer_account_can_create %}
+  		  <div class="row">
+  		  <div class="col-12 col-lg-6">
+  				<a href='{{ proxy_url }}/create' class="button cta">Create New Registry</a>
+  		  </div>
+  	  	</div>
+  		  {% endif %}
+		  <div class="row">
+			  <div class="col-12">
+				  {% if user %}
+					<div class="giftreggie-body">
+						{% if managed_registries.size > 0 %}
+							
+							</div>
+							<div class="registries-list">
+								<ul class="row">
+									{% for registry in managed_registries %}
+									<li class="col-12 col-lg-4">
+										<div class="single-registry-group">
+											<div class="manage-single-content">
+										<h3><a href='{{ proxy_url }}/registry/{{ registry.id }}' class="color-berry">{{ registry.name | escape_html }}</a></h3>
+										<p class="body1">{{ 'gift-reggie.terms.registry_event_date' | t }}: {{ registry.event_datetime | date }}</p>
+										<p class="body1">{{ 'gift-reggie.terms.registry_registrant' | t }}: {{ registry.registrant | escape_html }}</p>
+										{% if registry.coregistrant %}<p class="body1">{{ 'gift-reggie.terms.registry_coregistrant' | t }}: {{ registry.coregistrant | escape_html }}</p>{% endif %}
+									</div>
+										<a href='{{ proxy_url }}/registry/{{ registry.id }}' class="button cta manage-single-button">Manage</a>
+									</div>
+									</li>
+									{% endfor %}
+								</ul>
+							</div>
+						{% else %}
+							<p style="text-align: center">{{ 'gift-reggie.manage-registries.no_results' | t }}</p>
+						{% endif %}
+						
+					</div>
+					{% else %}
+						{% if customer %}
+							{{ 'gift-reggie.please_wait_redirect' | t }}
+						{% else %}
+							{% if shop.customer_accounts_enabled %}
+				        {% capture checkout_url %}{{ proxy_url }}/manage?lang={{ language }}{% endcapture %}
+				  			<h3 class="h3 manage-not-logged-in">
+								<a href='{% if language %}/{{ language }}{% endif %}/account/login?checkout_url={{ checkout_url | url_escape }}' class="color-berry">{{ 'gift-reggie.not_logged' | t }}</a>
+							</h3>
+							{% endif %}
+						{% endif %}
+					{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+</div>
+	</div>
+</div>
+{% include 'proxy_footer' %}

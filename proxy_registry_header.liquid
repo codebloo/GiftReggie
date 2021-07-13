@@ -9,39 +9,37 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-12">
-               <ul class="registry-nav">
-             
+               		 	<ul class="registry-nav">
+		               	 	<li class="registry-nav-link">
+			                  <a href="{{ proxy_url }}/registry/{{ id }}/profile" class="h4">Dashboard</a>
+			                </li>
               
-               <li class="registry-nav-link">
-                  <a href="{{ proxy_url }}/registry/{{ id }}/profile" class="h4">Dashboard</a>
-                </li>
+			               <li class="registry-nav-link">
+			                  <a href="{{ proxy_url }}/registry/{{ id }}" class="h4">Manage Registry</a>
+			                </li>
               
-               <li class="registry-nav-link">
-                  <a href="{{ proxy_url }}/registry/{{ id }}" class="h4">Manage Registry</a>
-                </li>
+			               <li class="registry-nav-link">
+			                  <a href="https://everlastly.myshopify.com/collections/all" class="h4">Catalog</a>
+			                </li>
               
-               <li class="registry-nav-link">
-                  <a href="https://everlastly.myshopify.com/collections/all" class="h4">Catalog</a>
-                </li>
+			               <li class="registry-nav-link">
+			                  <a href="https://everlastly.myshopify.com/collections/norcal-local-goods-starter-collection" class="h4">Quick Picks</a>
+			                </li>
               
-               <li class="registry-nav-link">
-                  <a href="https://everlastly.myshopify.com/collections/norcal-local-goods-starter-collection" class="h4">Quick Picks</a>
-                </li>
+			               <li class="registry-nav-link">
+			                  <a href="https://everlastly.myshopify.com/pages/checklist" class="h4">Checklist</a>
+			                </li>
               
-               <li class="registry-nav-link">
-                  <a href="https://everlastly.myshopify.com/pages/checklist" class="h4">Checklist</a>
-                </li>
-              
-               <li class="registry-nav-link">
-                  <a href="{{ proxy_url }}/registry/{{ id }}/share" class="h4">Share Registry</a>
-                </li>
-              {% if owner_can_see_orders %}
-               <li class="registry-nav-link">
-                  <a href="{{ proxy_url }}/registry/{{ id }}/orders" class="h4">Track Gifts</a>
-                </li>
-              {% endif %}
-            </ul>
-				</div>
+			               <li class="registry-nav-link">
+			                  <a href="{{ proxy_url }}/registry/{{ id }}/share" class="h4">Share Registry</a>
+			                </li>
+			              {% if owner_can_see_orders %}
+			               <li class="registry-nav-link">
+			                  <a href="{{ proxy_url }}/registry/{{ id }}/orders" class="h4">Track Gifts</a>
+			                </li>
+			              {% endif %}
+			            </ul>
+			
 		
 			<script type='text/javascript'>
 				window.jqReady.push(function(jQuery) {
@@ -69,6 +67,9 @@
 		</div>
 		</div>
 	</div>
+	
+	
+	
 	<div class="giftreggie-body">
 		<div id='giftreggie-alert' class='giftreggie-alert' style='display:none;'></div>
 		<script type='text/javascript'>

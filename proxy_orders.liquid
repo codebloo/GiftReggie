@@ -7,6 +7,9 @@
 	}
 </style>
 
+<div class="container">
+	<div class="row">
+		<div class="col-12">
 {% if orders.size > 0 %}
 <table class='giftreggie-orders'>
 	<tr>
@@ -27,7 +30,10 @@
 	{% endfor %}
 </table>
 {% else %}
-<p class="giftreggie-no-orders">{{ 'gift-reggie.manage-registries.no-orders' | t }}</p>
+<h3 class="giftreggie-no-orders color-berry">{{ 'gift-reggie.manage-registries.no-orders' | t }}</h3>
 {% endif %}
+</div>
+</div>
+</div>
 
 {% include 'proxy_registry_footer' %}
