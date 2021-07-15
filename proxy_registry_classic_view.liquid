@@ -8,7 +8,7 @@
 			</div>
 			</div>
 			{% endif %}	
-			<div class="{% if image %}col-12 col-lg-7{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
+			<div class="{% if image %}col-12 col-lg-9{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
 					<div class="registry-header-details">
 						<h2 class="registry-title">{{ registrant | escape_html }}{% if coregistrant %} & {{ coregistrant | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Registry</h2>
 						
@@ -25,7 +25,7 @@
 						{% endif %}
 						{% if is_admin%}
 						<div class="reigstry-description-edit">
-							<a href="{{ proxy_url }}/registry/{{ id }}/profile#weddingDetails" class="registry-title-edit">{{ 'gift-reggie.registry.edit_message' | t }}</a>
+							<a href="{{ proxy_url }}/registry/{{ id }}/profile" class="registry-title-edit">{{ 'gift-reggie.registry.edit_message' | t }}</a>
 						</div>
 						{% endif %}
 				
@@ -33,10 +33,11 @@
 						
 						<div class="registry-title-url">
 							<label class="registry-title-link-label">Registry Link:</label> 
-							<span class="link-text">https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}</span>
+							<span class="link-text" id="registryURL">https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}</span>
 							{% if is_admin%}
-							<div class="copy-link js-copy-link mini-button" rel="https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}">
+							<div class="copy-link js-copy-link mini-button" onclick="copyToClipboard('#registryURL')" rel="https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}">
 								<span class="mini-button-text">Copy Link</span>
+								<div id="copied-tooltip" class="copied-tooltip h5">copied!</div>
 							</div>
 							<div class="share-link">
 								<a href="{{ proxy_url }}/registry/{{ id }}/share" class="mini-button">
@@ -50,7 +51,43 @@
 		</div>
 	</div>
 </div>
+{% if is_admin %}
+<div class="registry-excerpt">
+		<div class="container">
+			<div class="row">
+				<div class="col-12 col-lg-8 offset-lg-2">
+            		<div class="dashboard-summary">
+	
+							<div class="summary-item summary-date">
+								<i></i>
+								<div class="summary-text">
+								<span class="summary-title">{{ event_datetime | date }} </span>
+								<span class="summary-subtitle">until your big day</span>
+								</div>
+							</div>
+							<div class="summary-item summary-gifts">
+								<i></i>
+								<div class="summary-text">
+								<span class="summary-title"> 
+									{{item_count}}
+									 Gifts</span>
+								<span class="summary-subtitle">added to your registry</span>
+								</div>
+							</div>
+							<div class="summary-item summary-purchased">
+								<i></i>
+								<div class="summary-text">
+								<span class="summary-title">Gifts</span>
+								<span class="summary-subtitle">Purchased or Claimed</span>
+								</div>
+							</div>
 
+					</div>
+		        </div>
+			</div>
+        </div>
+	</div>
+	{% endif %}
 
 {% if products.size == 0 %}
 	<div class="giftreggie-no-products">
@@ -69,19 +106,7 @@
 	</div>
 {% endif %}
 
-{% if is_admin %}
-	<div class="giftreggie-browse-add-products">
-		    <div class="container">
-		        <div class="row">
-		            <div class="col-12">
-							<a href='{% if language %}/{{ language }}{% endif %}{{ browsing_link }}' class="button cta">
-								Add Products
-							</a>
-						</div>
-		        </div>
-		    </div>
-		</div>
-{% endif %}
+
 
 {% if products.size > 0 %}
 	{% if max_pages > 1 %}
@@ -106,81 +131,373 @@
 <div class="full-registry">
 	<div class="container">
 		<div class="row">
-			{% unless is_admin %}
-			<div class="col-12 col-lg-3">FILTER</div>
-			{% endunless %}
-			<div class="col-12 {% unless is_admin %}col-lg-9{% endunless %}">
-				<form method="post" class="giftreggie-registry-form">
-					<div class="giftreggie-view-registry row" id="view-registry">
-			{% for product in products %}
-			<div class="col-6 col-lg-3">
-				<div class='registry-variant registry-gift-item'>
-					<input type='hidden' name="item-id" value="{{ product.id }}">
-					<input type='hidden' class='variant-id' name='variant-id' value='{{ product.variant_id }}'/>
-					<input type='hidden' class='product-id' name='product-id' value='{{ product.product_id }}'/>
-					<div class="giftreggie-item-image">
-						{% if product.still_needs > 0 or is_admin %}
-						<a href='{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ product.handle | escape_html }}'>{% endif %}
-							<img src="{{ product.image | img_url: '450x450' }}" />
-							{% if product.still_needs > 0 or is_admin %}</a>{% endif %}
-						</div>
-					<div class="gift-item-content">
-						{% if product.still_needs > 0 or is_admin %}
-					  		<div class="gift-item-vendor">{{ product.vendor | escape_html }}</div>
-							<a class="giftreggie-item-name gift-item-name" href='{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ product.handle | escape_html }}'>{{ product.title | escape_html }}</a>
-				
-						
-					{% else %}
-					       <div class="giftreggie-item-name gift-item-name">{{ product.title | escape_html }}</div>
-					{% endif %}
-						{% if product.properties %}
-							<div class="properties">
-							    {% assign bold_price = 0 %}
-								{% for property in product.properties %}
-								 {% if property.name is '_boldVariantPrices' %}
-								    {% assign bold_price = property.value %}
-								 {% endif %}
-								 {% if property.name contains 'bold' %}
-								        <div style='display: none' class="property property-{{ property.name | handleize }}">
-    										<span class="property-name">{{ property.name | escape_html }}</span>
-    										<span class="property-value">{{ property.value | escape_html }}</span>
-    									</div>
-								    {% else %}
-    									<div class="property property-{{ property.name | handleize }}">
-    										<span class="property-name">{{ property.name | escape_html }}</span>
-    										<span class="property-value">{{ property.value | escape_html }}</span>
-    									</div>
-									{% endif %}
-								{% endfor %}
+			<div class="col-12 col-lg-2">
+				<section class="component-collection-filters"> 
+	        		<form class="controls collection-filters-form">
+						<label class="filter-title">Filter</label>
+						<div class="collection-filter-drop filter-group rating-group">
+							<div class="filter-drop-title filter-title">
+								<i class="fal fa-chevron-down" aria-hidden="true"></i>	
+	                          	<span>Evergrade Rating</span>
 							</div>
-						{% endif %}
-					</div>
-					<div class="gift-item-price">
-						<span class='money'>{{ (product.price + bold_price) | money }}</span>
-						{% unless is_admin %}{% if product.still_needs > 0 %}<button class="giftreggie-add-to-cart btn">{{ 'gift-reggie.cart-update.add' | t }}</button>{% endif %}{% endunless %}
-					</div>
-					<div class="manage-registry-item">
-							<div class="wants">
-								{{ 'gift-reggie.registry.wants' | t }}
-								{% if is_admin %}
-								<input type='text' class="giftreggie-want-quantity" name="want-quantity-{{ product.id }}" maxlength=3 value='{{ product.wants }}'/>{% else %}
-								<span>{{ product.wants }}</span>
-								{% endif %}
-							</div>
-							<div class="has">
-								<span>{{ 'gift-reggie.registry.has' | t }}</span>
-								{{ product.has }}
-							</div>
-							<div class="has">
-								<span>{{ 'gift-reggie.registry.needs' | t }}</span>
-								{{ product.still_needs }}
+							<div class="filter-drop">
+								<fieldset data-filter-group class="checkbox-group">
+									<div class="filter-items">
+						                <div class="checkbox">
+						                    <input type="checkbox" value=".rating-high"/>
+											<label class="checkbox-label body1 value-high">90-100</label>
+						                </div>
+						                <div class="checkbox">
+											 <input type="checkbox" value=".rating-above-average"/>
+						                    <label class="checkbox-label body1 value-above-average">80-89</label>
+						                </div>
+						                <div class="checkbox">
+											<input type="checkbox" value=".rating-average"/>
+						                    <label class="checkbox-label body1 value-average">70-79</label>
+						                </div>
+						                <div class="checkbox">
+											<input type="checkbox" value=".rating-below-average"/>
+						                    <label class="checkbox-label body1 value-below-average">60-69</label>
+						                </div>
+						                <div class="checkbox">
+											<input type="checkbox" value=".rating-low"/>
+						                    <label class="checkbox-label body1 value-low">0-59</label>
+						                </div>
+									</div>
+				            	</fieldset>
 							</div>
 						</div>
-					
-				
-				</div>
+						<div class="collection-filter-drop filter-group categories-group">
+							<div class="filter-drop-title filter-title">
+								<i class="fal fa-chevron-down" aria-hidden="true"></i>	
+	                 		   <span>Categories</span>
+						   	</div>
+							<div class="filter-drop">
+								<fieldset data-filter-group class="checkbox-group">
+								<div class="filter-items">
+					                <div class="checkbox">
+										<input type="checkbox" value=".cat-kitchen"/>
+					                    <label class="checkbox-label body1">Kitchen</label>
+					                </div>
+					                <div class="checkbox">
+					                    <input type="checkbox" value=".cat-tabletop"/>
+										<label class="checkbox-label body1">Tabletop</label>
+                
+					                </div>
+					                <div class="checkbox">
+					                    <input type="checkbox" value=".cat-bed"/>
+									    <label class="checkbox-label body1">Bed & Bath</label>
+					                </div>
+					                <div class="checkbox">
+					                    <input type="checkbox" value=".cat-home"/>
+									    <label class="checkbox-label body1">Home </label>
+					                </div>
+					                <div class="checkbox">
+					                    <input type="checkbox" value=".cat-cash"/>
+									    <label class="checkbox-label body1">Cash</label>
+					                </div>
+								</div>
+		            		</fieldset>
+							</div>
+						</div>
+						<div class="collection-filter-drop filter-group  price-group">
+							<div class="filter-drop-title filter-title">
+								<i class="fal fa-chevron-down" aria-hidden="true"></i>	
+	                  		  	<span>Price</span>
+							</div>
+							<div class="filter-drop">
+								<fieldset data-filter-group class="checkbox-group">
+									<div class="filter-items">
+										<div class="checkbox">
+					                    	<input type="checkbox" value=".price-low"/>
+									    	<label class="checkbox-label body1">$49-$100</label>
+					                	</div>
+
+						                <div class="checkbox">
+						                    <input type="checkbox" value=".price-below"/>
+										    <label class="checkbox-label body1">$101-$200</label>
+						                </div>
+
+						                <div class="checkbox">
+						                    <input type="checkbox" value=".price-average"/>
+										    <label class="checkbox-label body1">$201-$599</label>
+						                </div>
+				  						<div class="checkbox">
+					                    	<input type="checkbox" value=".price-above"/>
+									    	<label class="checkbox-label body1">$600-$900</label>
+					               	 	</div>
+				  						<div class="checkbox">
+					                    	<input type="checkbox" value=".price-high"/>
+									    	<label class="checkbox-label body1">$1000+</label>
+					                	</div>
+									</div>
+		            			</fieldset>
+							</div>
+						</div>
+		 		   	 	<button type="reset" class="control control-text button cta">Reset</button>
+	        		</form>
+				</section>
 			</div>
-			{% endfor %}
+			<div class="col-12 col-lg-10">
+				{% if is_admin %}
+					<div class="giftreggie-browse-add-products">
+						 <a href='{% if language %}/{{ language }}{% endif %}{{ browsing_link }}' class="add-gifts">
+							 <i class="fa fa-plus"></i> Add Gifts
+						 </a>
+					</div>
+				{% endif %}
+				
+				<form method="post" class="giftreggie-registry-form">
+					<input type='hidden' name='extra' value='{{ extra | escape_html }}'/>
+	
+					<div class="giftreggie giftreggie-view-registry add-gifts-form sort-products">
+			
+						{% for product in products %}
+						{% assign tags = product.tags | split: ", " %}
+						<div class="registry-gift-item product-grid-item mix {% for tag in tags %} {{tag | downcase}}{% endfor %}">
+							<div class='registry-variant'>
+								<input type='hidden' name="item-id" value="{{ product.id }}">
+								<input type='hidden' class='variant-id' name='variant-id' value='{{ product.variant_id }}'/>
+								<input type='hidden' class='product-id' name='product-id' value='{{ product.product_id }}'/>
+								
+	  						  	<div class="image-wrapper">
+	  							<div class="rating-badge badge-{{product.metafields.ratingvalue.ratingvalue}}">
+	  							    {% if product.metafields.rating.rating %}
+	  							     {{product.metafields.rating.rating}}
+	  							     {% else %}
+	  							     N/A
+	  							     {% endif %}
+	  							</div>
+	  							<div class="photo-badges">
+	  								<a href="{{ product.image}}" data-lity class="enlarge-gift-item">
+	  									<i class="fa fa-arrows" aria-hidden="true"></i>
+	  								</a>
+	  								{% if is_admin %}
+	  								{% unless product.has %}
+	  								<button name='action' value="delete-{{ product.id }}" class="delete-gift-item">
+	  									<i class="fa fa-trash-o" aria-hidden="true"></i>
+	  								</button>
+	  								{% endunless %}
+	  								{% endif %}
+								
+	  							</div>
+						  
+	  						      <img src="{{ product.image | img_url: '450x450' }}" class="gift-item-image" alt="{{ product.featured_image.alt | escape }}">
+						
+	  						  </div>
+								
+							  	<div class="text-wrapper">
+								  <div class="gift-item-vendor">{{ product.vendor | escape_html }}</div>
+							    	<h4 class="product-grid-name h3">
+									<a href="{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ product.handle | escape_html }}" class="color-berry product-grid-title gift-item-name">{{ product.title | escape_html }}</a>
+								</h4>
+								{% if product.properties %}
+									<div class="properties">
+									    {% assign bold_price = 0 %}
+										{% for property in product.properties %}
+										 {% if property.name is '_boldVariantPrices' %}
+										    {% assign bold_price = property.value %}
+										 {% endif %}
+										 {% if property.name contains 'bold' %}
+										        <div style='display: none' class="property property-{{ property.name | handleize }}">
+		    										<span class="property-name">{{ property.name | escape_html }}</span>
+		    										<span class="property-value">{{ property.value | escape_html }}</span>
+		    									</div>
+										    {% else %}
+		    									<div class="property property-{{ property.name | handleize }}">
+		    										<span class="property-name">{{ property.name | escape_html }}</span>
+		    										<span class="property-value">{{ property.value | escape_html }}</span>
+		    									</div>
+											{% endif %}
+										{% endfor %}
+									</div>
+								{% endif %}
+							      	<div class="color-berry body2 gift-item-price">
+										<span class='money'>{{ (product.price + bold_price) | money }}</span>
+									</div>
+							    </div>
+							
+								 	
+								
+									<div class="manage-registry-item">
+										<div class="wants gift-item-requested">
+										<span>Requested:</span>
+										{% if is_admin %}
+										<input type='text' class="giftreggie-want-quantity" name="want-quantity-{{ product.id }}" maxlength=3 value='{{ product.wants }}'/>{% else %}
+										<span>{{ product.wants }}</span>
+										{% endif %}
+									</div>
+							
+									<div class="needs gift-item-needed">
+										<span>Still Needed:</span>
+										<span>{{ product.still_needs }}</span>
+									</div>
+									
+								
+									
+									{% if product.still_needs > 0 %}
+									<button class="button cta buy-registry-item giftreggie-add-to-cart">
+										{{ 'gift-reggie.cart-update.add' | t }}
+									</button>
+									{% endif %}
+									
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+				
+					</div>
+					{% if is_admin %}
+						<div class="action-buttons manage-registry-buttons">
+							<button id='discard-changes' class="button cta">{{ 'gift-reggie.terms.discard_changes' | t }}</button>
+							<button id='save-changes' name='action' value='update' class="button cta">{{ 'gift-reggie.terms.save_changes' | t }}</button>
+						</div>
+						<script type='text/javascript'>
+							window.jqReady.push(function(jQuery) {
+								(function($) {
+									$('#view-registry input').keypress(function (e) {
+										if (e.which == 13) {
+											$('#save-changes').click();
+											return false;
+										}
+									});
+									$('#discard-changes').click(function() {
+										window.location.href = window.location.href;
+										return false;
+									});
+								})(jQuery);
+							});
+						</script>
+					{% else %}
+						{% if registry_notes %}
+					<div class="giftreggie-notes">
+						<h4 class="h4 gift-notes-label">{{ 'gift-reggie.cart-update.note' | t }}</h4>
+						<textarea name='note' class="gift-notes-textarea">{{ cart.note | escape }}</textarea>
+					</div>
+						{% endif %}
+						<div class="action-buttons manage-registry-buttons">
+							<button id="registry-update-cart" class="button cta">{{ 'gift-reggie.cart-update.update' | t }}</button>
+							{% include 'snippet-giftreggie-checkout-button' %}
+						</div>
+						<script type='text/javascript'>
+							window.jqReady.push(function(jQuery) {
+								(function($) {
+									$('.registry-variant-quantity').keypress(function (e) {
+										if (e.which == 13) {
+											$('#registry-update-cart').click();
+											return false;
+										}
+									});
+								})(jQuery);
+							});
+						</script>
+					{% endif %}
+					{% if max_pages > 1 %}
+						<div id="pagination-div"></div>
+					{% endif %}
+					<div id="status-bar" style="display:none;">{{ 'gift-reggie.cart-update.success' | t }}</div>
+				</form>
+					{% comment %}
+				
+				<form method="post" class="giftreggie-registry-form">
+					<input type='hidden' name='extra' value='{{ extra | escape_html }}'/>
+					<div class="giftreggie-view-registry add-gifts-form" id="view-registry">
+						
+						{% for product in products %}
+						{% assign tags = product.tags | split: ", " %}
+						<div class="registry-gift-item product-grid-item mix {% for tag in tags %} {{tag | downcase}}{% endfor %}">
+							<input type='hidden' name="item-id" value="{{ product.id }}">
+							<input type='hidden' class='variant-id' name='variant-id' value='{{ product.variant_id }}'/>
+							<input type='hidden' class='product-id' name='product-id' value='{{ product.product_id }}'/>
+							
+						  <div class="product-grid-item-content">
+				
+						  	<div class="image-wrapper">
+							<div class="rating-badge badge-{{product.metafields.ratingvalue.ratingvalue}}">
+							    {% if product.metafields.rating.rating %}
+							     {{product.metafields.rating.rating}}
+							     {% else %}
+							     N/A
+							     {% endif %}
+							</div>
+							<div class="photo-badges">
+								<a href="{{ product.image}}" data-lity class="enlarge-gift-item">
+									<i class="fa fa-arrows" aria-hidden="true"></i>
+								</a>
+								{% if is_admin %}
+								{% unless product.has %}
+								<button name='action' value="delete-{{ product.id }}" class="delete-gift-item">
+									<i class="fa fa-trash-o" aria-hidden="true"></i>
+								</button>
+								{% endunless %}
+								{% endif %}
+								
+							</div>
+						  
+						      <img src="{{ product.image | img_url: '450x450' }}" class="gift-item-image" alt="{{ product.featured_image.alt | escape }}">
+						
+						  </div>
+						  	<div class="text-wrapper">
+							  <div class="gift-item-vendor">{{ product.vendor | escape_html }}</div>
+						    	<h4 class="product-grid-name h3">
+								<a href="{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ product.handle | escape_html }}" class="color-berry product-grid-title gift-item-name">{{ product.title | escape_html }}</a>
+							</h4>
+							{% if product.properties %}
+								<div class="properties">
+								    {% assign bold_price = 0 %}
+									{% for property in product.properties %}
+									 {% if property.name is '_boldVariantPrices' %}
+									    {% assign bold_price = property.value %}
+									 {% endif %}
+									 {% if property.name contains 'bold' %}
+									        <div style='display: none' class="property property-{{ property.name | handleize }}">
+	    										<span class="property-name">{{ property.name | escape_html }}</span>
+	    										<span class="property-value">{{ property.value | escape_html }}</span>
+	    									</div>
+									    {% else %}
+	    									<div class="property property-{{ property.name | handleize }}">
+	    										<span class="property-name">{{ property.name | escape_html }}</span>
+	    										<span class="property-value">{{ property.value | escape_html }}</span>
+	    									</div>
+										{% endif %}
+									{% endfor %}
+								</div>
+							{% endif %}
+						      	<div class="color-berry body2 gift-item-price">
+									<span class='money'>{{ (product.price + bold_price) | money }}</span>
+								</div>
+						    </div>
+	
+						  </div>
+						  
+								
+									<div class="manage-registry-item">
+										<div class="wants gift-item-requested">
+										<span>Requested:</span>
+										{% if is_admin %}
+										<input type='text' class="giftreggie-want-quantity" name="want-quantity-{{ product.id }}" maxlength=3 value='{{ product.wants }}'/>{% else %}
+										<span>{{ product.wants }}</span>
+										{% endif %}
+									</div>
+							
+									<div class="needs gift-item-needed">
+										<span>Still Needed:</span>
+										<span>{{ product.still_needs }}</span>
+									</div>
+									
+								
+									
+									{% if product.still_needs > 0 %}
+									<button class="button cta buy-registry-item giftreggie-add-to-cart">
+										{{ 'gift-reggie.cart-update.add' | t }}
+									</button>
+									{% endif %}
+									
+								</div>
+						  
+						</div>
+				
+						{% endfor %}
 					</div>
 		
 					{% if is_admin %}
@@ -207,9 +524,9 @@
 					{% else %}
 	
 						{% if registry_notes %}
-							<div class="giftreggie-notes">
-							<h4>{{ 'gift-reggie.cart-update.note' | t }}</h4>
-							<textarea name='note'>{{ cart.note | escape }}</textarea>
+						<div class="giftreggie-notes">
+							<h4 class="h4 gift-notes-label">{{ 'gift-reggie.cart-update.note' | t }}</h4>
+							<textarea name='note' class="gift-notes-textarea">{{ cart.note | escape }}</textarea>
 						</div>
 						{% endif %}
 		
@@ -247,6 +564,7 @@
 					<div id="status-bar" style="display:none;">{{ 'gift-reggie.cart-update.success' | t }}</div>
 					<input type='hidden' name='extra' value='{{ extra | escape_html }}'/>
 				</form>
+				{% endcomment %}
 			</div>
 		</div>
 	</div>
@@ -292,6 +610,57 @@
 		})(jQuery);
 	});
 	</script>
+	
+	<script>
+		
+		function copyToClipboard(element) {
+		  var $temp = $("<input>");
+		  $("body").append($temp);
+		  $temp.val($(element).text()).select();
+		  	document.execCommand("copy");
+		  $temp.remove();
+			}
+		
+		$( ".js-copy-link" ).click(function() {
+			var tooltip = $('.copied-tooltip');
+			tooltip.show();
+			setTimeout(function() {
+				tooltip.fadeOut( "slow" );
+			}, 2000);
+		  
+			  	});
+				
+				
+			    $(document).ready(function () {
+			         $('.filter-drop').hide();
+			         $('.filter-drop-title').click(function () {
+			             $(this).next().slideToggle(200);
+			             $(this).toggleClass("expanded");
+  
+			         });
+			         $('.filter-drop').slideUp(200);
+			     });
+  
+			     var containerEl = document.querySelector('.sort-products');
+
+			     var mixer = mixitup(containerEl, {
+			         multifilter: {
+			             enable: true
+			         },
+			         animation: {
+			             effects: 'fade translateZ(-100px)'
+			         }
+			     });
+				
+		</script>
+				 
+				 
+				 <div class="shopping-pop" id="shoppingPop">
+				 	<div class="shopping-pop-layout">
+						
+						
+					</div>
+				 </div>
 	{% include 'proxy_cart_update' %}
 	
 {% endif %}

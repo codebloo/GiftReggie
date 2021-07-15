@@ -1,4 +1,4 @@
-{% include 'proxy_header' %}
+<{% include 'proxy_header' %}
 <div class="giftreggie-front giftreggie-create giftreggie-theme-{{ theme.name | handleize }}">
 	<div class="giftreggie-header">
 		<div class="container">
@@ -56,7 +56,7 @@
 				 {% else %}
 					
 					{% if customer %}
-						{{ 'gift-reggie.please_wait_redirect' | t }}
+						<p class="h3 text-center">{{ 'gift-reggie.please_wait_redirect' | t }}</p>
 					{% else %}
 				
 						{% if shop.customer_accounts_enabled %}
@@ -79,3 +79,4 @@
 	</div>
 </div>
 {% include 'proxy_footer' %}
+>

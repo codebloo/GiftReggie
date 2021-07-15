@@ -35,9 +35,10 @@
 						
 							<div class="registry-title-url">
 								<label class="registry-title-link-label">Registry Link:</label> 
-								<span class="link-text">https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}</span>
-								<div class="copy-link js-copy-link mini-button" rel="https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}">
+								<span class="link-text" id="registryURL">https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}</span>
+								<div class="copy-link js-copy-link mini-button" onclick="copyToClipboard('#registryURL')" rel="https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}">
 									<span class="mini-button-text">Copy Link</span>
+									<div id="copied-tooltip" class="copied-tooltip h5">copied!</div>
 								</div>
 								<div class="share-link">
 									<a href="{{ proxy_url }}/registry/{{ id }}/share" class="mini-button">
@@ -50,45 +51,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="registry-excerpt">
-		<div class="container">
-			<div class="row">
-				<div class="col-12 col-lg-8 offset-lg-2">
-            		<div class="dashboard-summary">
-		
-							<div class="summary-item summary-date">
-								<i></i>
-								<div class="summary-text">
-								<span class="summary-title">{{ event_datetime | date }} </span>
-								<span class="summary-subtitle">until your big day</span>
-								</div>
-							</div>
-							<div class="summary-item summary-gifts">
-								<i></i>
-								<div class="summary-text">
-								<span class="summary-title"> 
-									{% assign count = 0 %}
-									{% for product in products %}
-									{% assign count = product.wants + count %}
-										{{count}}
-									{% endfor %}
-									 Gifts</span>
-								<span class="summary-subtitle">added to your registry</span>
-								</div>
-							</div>
-							<div class="summary-item summary-purchased">
-								<i></i>
-								<div class="summary-text">
-								<span class="summary-title">Gifts</span>
-								<span class="summary-subtitle">Purchased or Claimed</span>
-								</div>
-							</div>
 
-					</div>
-		        </div>
-			</div>
-        </div>
-	</div>
 	<div class="registry-quicklinks">
 		<div class="container">
 			
@@ -557,3 +520,23 @@
 		})(jQuery);
 	});
 </script>
+	
+	<script>
+		
+		function copyToClipboard(element) {
+		  var $temp = $("<input>");
+		  $("body").append($temp);
+		  $temp.val($(element).text()).select();
+		  	document.execCommand("copy");
+		  $temp.remove();
+			}
+		
+		$( ".js-copy-link" ).click(function() {
+			var tooltip = $('.copied-tooltip');
+			tooltip.show();
+			setTimeout(function() {
+				tooltip.fadeOut( "slow" );
+			}, 2000);
+		  
+			  	});
+		</script>
