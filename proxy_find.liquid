@@ -7,41 +7,27 @@
 		<div class="giftreggie-header">
 			<h3 class="h1">{{ 'gift-reggie.find-registry.result_title' | t }}</h3>
 			{% if search_results and search_results.size > 0 %}
-				<p><a href='{{ proxy_url }}/find' class="body1">{{ 'gift-reggie.find-registry.find_again' | t }}</a></p>
+				<p><a href='{{ proxy_url }}/find' class="body1 color-berry">{{ 'gift-reggie.find-registry.find_again' | t }}</a></p>
 			{% endif %}
 		</div>
 		<div class="giftreggie-body">
 			{% if search_results.size > 0 %}
-				<table class="giftreggie-desktop">
-					<tr>
-						<th class="body1">{{ 'gift-reggie.terms.registry_name' | t }}</th>
-						<th class="body1">{{ 'gift-reggie.terms.registry_event_date' | t }}</th>
-						<th class="body1">{{ 'gift-reggie.terms.registry_registrant' | t }}</th>
-						<th class="body1">{{ 'gift-reggie.terms.registry_coregistrant' | t }}</th>
-					</tr>
-					{% for result in search_results %}
-					<tr>
-						<td class="body1"><a href='{{ proxy_url }}/registry/{{ result.id }}'>{{ result.name | escape_html }}</a></td>
-						<td class="body1">{{ result.event_datetime | date }}</td>
-						<td class="body1">{{ result.registrant | escape_html }}</td>
-						<td class="body1">{% if result.coregistrant %}{{ result.coregistrant | escape_html }}{% else %}None{% endif %}</td>
-					</tr>
-					{% endfor %}
-				</table>
-				<div class="giftreggie-mobile">
+				
+				<div class="giftreggie-registry-results">
 					<ul>
 						{% for registry in search_results %}
 						<li>
-							<p><a href='{{ proxy_url }}/registry/{{ registry.id }}' class="body1">{{ registry.name | escape_html }}</a></p>
-							<p class="body1">{{ 'gift-reggie.terms.registry_event_date' | t }}: {{ registry.event_datetime | date }}</p>
-							<p class="body1">{{ 'gift-reggie.terms.registry_registrant' | t }}: {{ registry.registrant | escape_html }}</p>
-							<p class="body1">{% if registry.coregistrant %}{{ 'gift-reggie.terms.registry_coregistrant' | t }}: {{ registry.coregistrant | escape_html }}{% endif %}</p>
+								<a href='{{ proxy_url }}/registry/{{ registry.id }}' class="h3 color-berry">
+									{{ registry.registrant | escape_html }} {% if registry.coregistrant %} & {{ registry.coregistrant | escape_html }}{% endif %}
+								</a>
+							<span class="body1">{{ registry.event_datetime | date }}</span>
+						
 						</li>
 						{% endfor %}
 					</ul>
 				</div>
 			{% else %}
-				<p><a href='{{ proxy_url }}/find' class="body1 text-link">{{ 'gift-reggie.find-registry.no_results' | t }}</a></p>
+				<p><a href='{{ proxy_url }}/find' class="h3 color-berry text-link">{{ 'gift-reggie.find-registry.no_results' | t }}</a></p>
 			{% endif %}		
 		</div>
 	{% else %}
@@ -74,7 +60,7 @@
 	{% endif %}
 	<div class="giftreggie-footer body1">
 		{% if user %}
-			<p><a href='{{ proxy_url }}/create' class="body1 text-link">{{ 'gift-reggie.find-registry.create_manage' | t }}</a></p>
+			<p><a href='{{ proxy_url }}/create' class="button cta">Create & Manage Registries</a></p>
 		{% else %}
 			{% if customer_account_integration %}
 				{% if shop.customer_accounts_enabled %}

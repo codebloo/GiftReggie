@@ -1,3 +1,13 @@
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( ".sortable" ).sortable();
+    $( ".sortable" ).disableSelection();
+  } );
+  </script>
+
 <div class="manage-registry-header">
     <div class="container">
 		<div class="row no-gutters manage-registry-layout">
@@ -12,7 +22,6 @@
 					<div class="registry-header-details">
 						<h2 class="registry-title">{{ registrant | escape_html }}{% if coregistrant %} & {{ coregistrant | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Registry</h2>
 						
-						<div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
 					
 						
 						{% if message %}
@@ -77,7 +86,11 @@
 							<div class="summary-item summary-purchased">
 								<i></i>
 								<div class="summary-text">
-								<span class="summary-title">Gifts</span>
+								<span class="summary-title">{% assign purchased = 0 %}
+{% for product in products %}
+{% assign purchased = product.has + purchased %}
+{% endfor %}
+{{purchased}} Gifts</span>
 								<span class="summary-subtitle">Purchased or Claimed</span>
 								</div>
 							</div>
@@ -86,7 +99,7 @@
 		        </div>
 			</div>
         </div>
-	</div>
+</div>
 	{% endif %}
 
 {% if products.size == 0 %}
@@ -210,7 +223,7 @@
 									<div class="filter-items">
 										<div class="checkbox">
 					                    	<input type="checkbox" value=".price-low"/>
-									    	<label class="checkbox-label body1">$49-$100</label>
+									    	<label class="checkbox-label body1">$0-$100</label>
 					                	</div>
 
 						                <div class="checkbox">
@@ -234,6 +247,28 @@
 		            			</fieldset>
 							</div>
 						</div>
+						<div class="collection-filter-drop filter-group  purchased-group">
+							<div class="filter-drop-title filter-title">
+								<i class="fal fa-chevron-down" aria-hidden="true"></i>	
+	                  		  	<span>Completion Status</span>
+							</div>
+							<div class="filter-drop">
+								<fieldset data-filter-group class="checkbox-group">
+									<div class="filter-items">
+										<div class="checkbox">
+					                    	<input type="checkbox" value=".needs"/>
+									    	<label class="checkbox-label body1">Needs</label>
+					                	</div>
+
+						                <div class="checkbox">
+						                    <input type="checkbox" value=".has"/>
+										    <label class="checkbox-label body1">Has</label>
+						                </div>
+					              
+									</div>
+		            			</fieldset>
+							</div>
+						</div>
 		 		   	 	<button type="reset" class="control control-text button cta">Reset</button>
 	        		</form>
 				</section>
@@ -241,110 +276,106 @@
 			<div class="col-12 col-lg-10">
 				{% if is_admin %}
 					<div class="giftreggie-browse-add-products">
-						 <a href='{% if language %}/{{ language }}{% endif %}{{ browsing_link }}' class="add-gifts">
-							 <i class="fa fa-plus"></i> Add Gifts
-						 </a>
+						<a href="#chooseShop" class="add-gifts" data-lity> <i class="fa fa-plus"></i> Add Gifts</a>
 					</div>
+					
+					{% include 'manage-registry-collection-popup' %}
 				{% endif %}
 				
 				<form method="post" class="giftreggie-registry-form">
 					<input type='hidden' name='extra' value='{{ extra | escape_html }}'/>
 	
-					<div class="giftreggie giftreggie-view-registry add-gifts-form sort-products">
-			
+					<div class="giftreggie giftreggie-view-registry add-gifts-form sort-products sortable">
+					
 						{% for product in products %}
-						{% assign tags = product.tags | split: ", " %}
-						<div class="registry-gift-item product-grid-item mix {% for tag in tags %} {{tag | downcase}}{% endfor %}">
-							<div class='registry-variant'>
-								<input type='hidden' name="item-id" value="{{ product.id }}">
-								<input type='hidden' class='variant-id' name='variant-id' value='{{ product.variant_id }}'/>
-								<input type='hidden' class='product-id' name='product-id' value='{{ product.product_id }}'/>
-								
-	  						  	<div class="image-wrapper">
-	  							<div class="rating-badge badge-{{product.metafields.ratingvalue.ratingvalue}}">
-	  							    {% if product.metafields.rating.rating %}
-	  							     {{product.metafields.rating.rating}}
-	  							     {% else %}
-	  							     N/A
-	  							     {% endif %}
-	  							</div>
-	  							<div class="photo-badges">
-	  								<a href="{{ product.image}}" data-lity class="enlarge-gift-item">
-	  									<i class="fa fa-arrows" aria-hidden="true"></i>
-	  								</a>
-	  								{% if is_admin %}
-	  								{% unless product.has %}
-	  								<button name='action' value="delete-{{ product.id }}" class="delete-gift-item">
-	  									<i class="fa fa-trash-o" aria-hidden="true"></i>
-	  								</button>
-	  								{% endunless %}
-	  								{% endif %}
-								
-	  							</div>
-						  
-	  						      <img src="{{ product.image | img_url: '450x450' }}" class="gift-item-image" alt="{{ product.featured_image.alt | escape }}">
+	   						{% assign registry_product_handle = product.handle %}
+	   						{% assign shop_product = all_products[registry_product_handle] %}
 						
-	  						  </div>
+						
+							{% assign tags = product.tags | split: ", " %}
+
+							<div class="registry-gift-item product-grid-item mix {% for tag in tags %} {{tag | downcase}}{% endfor %}{% if product.still_needs > 0 %} needs{% else %} has{% endif %}">
+								<div class='registry-variant'>
+									<input type='hidden' name="item-id" value="{{ product.id }}">
+									<input type='hidden' class='variant-id' name='variant-id' value='{{ product.variant_id }}'/>
+									<input type='hidden' class='product-id' name='product-id' value='{{ product.product_id }}'/>
 								
-							  	<div class="text-wrapper">
-								  <div class="gift-item-vendor">{{ product.vendor | escape_html }}</div>
-							    	<h4 class="product-grid-name h3">
-									<a href="{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ product.handle | escape_html }}" class="color-berry product-grid-title gift-item-name">{{ product.title | escape_html }}</a>
-								</h4>
-								{% if product.properties %}
-									<div class="properties">
-									    {% assign bold_price = 0 %}
-										{% for property in product.properties %}
-										 {% if property.name is '_boldVariantPrices' %}
-										    {% assign bold_price = property.value %}
-										 {% endif %}
-										 {% if property.name contains 'bold' %}
-										        <div style='display: none' class="property property-{{ property.name | handleize }}">
-		    										<span class="property-name">{{ property.name | escape_html }}</span>
-		    										<span class="property-value">{{ property.value | escape_html }}</span>
-		    									</div>
-										    {% else %}
-		    									<div class="property property-{{ property.name | handleize }}">
-		    										<span class="property-name">{{ property.name | escape_html }}</span>
-		    										<span class="property-value">{{ property.value | escape_html }}</span>
-		    									</div>
+		  						  	<div class="image-wrapper">
+										<div class="rating-badge badge-{{shop_product.metafields.ratingvalue.ratingvalue}}">
+			   								{% if shop_product.metafields.rating.rating %}
+		  							    		{{shop_product.metafields.rating.rating}}
+		  							     	{% else %}
+		  							    	 	N/A
+		  							     {% endif %}
+		  							</div>
+		  							<div class="photo-badges">
+		  								<a href="{{ product.image}}" data-lity class="enlarge-gift-item">
+		  									<i class="fa fa-arrows" aria-hidden="true"></i>
+		  								</a>
+		  								{% if is_admin %}
+		  								{% unless product.has %}
+		  								<button name='action' value="delete-{{ product.id }}" class="delete-gift-item">
+		  									<i class="fa fa-trash-o" aria-hidden="true"></i>
+		  								</button>
+		  								{% endunless %}
+		  								{% endif %}
+								
+		  							</div>
+		  						      <img src="{{ product.image | img_url: '450x450' }}" class="gift-item-image" alt="{{ product.featured_image.alt | escape }}">
+		  						  </div>
+								
+								  	<div class="text-wrapper">
+									  <div class="gift-item-vendor">{{ product.vendor | escape_html }}</div>
+								    	<h4 class="product-grid-name h3">
+										<a href="{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ product.handle | escape_html }}" class="color-berry product-grid-title gift-item-name">{{ product.title | escape_html }}</a>
+									</h4>
+									{% if product.properties %}
+										<div class="properties">
+										    {% assign bold_price = 0 %}
+											{% for property in product.properties %}
+											 {% if property.name is '_boldVariantPrices' %}
+											    {% assign bold_price = property.value %}
+											 {% endif %}
+											 {% if property.name contains 'bold' %}
+											        <div style='display: none' class="property property-{{ property.name | handleize }}">
+			    										<span class="property-name">{{ property.name | escape_html }}</span>
+			    										<span class="property-value">{{ property.value | escape_html }}</span>
+			    									</div>
+											    {% else %}
+			    									<div class="property property-{{ property.name | handleize }}">
+			    										<span class="property-name">{{ property.name | escape_html }}</span>
+			    										<span class="property-value">{{ property.value | escape_html }}</span>
+			    									</div>
+												{% endif %}
+											{% endfor %}
+										</div>
+									{% endif %}
+								      	<div class="color-berry body2 gift-item-price">
+											<span class='money'>{{ (product.price + bold_price) | money }}</span>
+										</div>
+								    </div>
+										<div class="manage-registry-item">
+											<div class="wants gift-item-requested">
+											<span>Requested:</span>
+											{% if is_admin %}
+											<input type='text' class="giftreggie-want-quantity" name="want-quantity-{{ product.id }}" maxlength=3 value='{{ product.wants }}'/>{% else %}
+											<span>{{ product.wants }}</span>
 											{% endif %}
-										{% endfor %}
-									</div>
-								{% endif %}
-							      	<div class="color-berry body2 gift-item-price">
-										<span class='money'>{{ (product.price + bold_price) | money }}</span>
-									</div>
-							    </div>
-							
-								 	
-								
-									<div class="manage-registry-item">
-										<div class="wants gift-item-requested">
-										<span>Requested:</span>
-										{% if is_admin %}
-										<input type='text' class="giftreggie-want-quantity" name="want-quantity-{{ product.id }}" maxlength=3 value='{{ product.wants }}'/>{% else %}
-										<span>{{ product.wants }}</span>
+										</div>
+										<div class="needs gift-item-needed">
+											<span>Still Needed:</span>
+											<span>{{ product.still_needs }}</span>
+										</div>
+										{% if product.still_needs > 0 %}
+										<button class="button cta buy-registry-item giftreggie-add-to-cart js-go-cart-add-to-cart add-to-cart" data-add-to-cart>
+											{{ 'gift-reggie.cart-update.add' | t }}
+										</button>
 										{% endif %}
 									</div>
-							
-									<div class="needs gift-item-needed">
-										<span>Still Needed:</span>
-										<span>{{ product.still_needs }}</span>
-									</div>
-									
-								
-									
-									{% if product.still_needs > 0 %}
-									<button class="button cta buy-registry-item giftreggie-add-to-cart">
-										{{ 'gift-reggie.cart-update.add' | t }}
-									</button>
-									{% endif %}
-									
 								</div>
 							</div>
-						</div>
-						{% endfor %}
+							{% endfor %}
+	
 				
 					</div>
 					{% if is_admin %}
@@ -568,8 +599,12 @@
 			</div>
 		</div>
 	</div>
-</div>	
-	
+</div>
+
+
+
+{% include 'manage-registry-carousels' %}
+
 	<script type='text/javascript'>	
 	window.jqReady.push(function(jQuery) {		
 		(function( $ ) {
@@ -664,3 +699,140 @@
 	{% include 'proxy_cart_update' %}
 	
 {% endif %}
+
+
+<script>
+	
+	$(window).on('load', function() {  
+
+	$('.js-dashboard-categories').slick({
+	    slidesToShow: 5,
+	    slidesToScroll: 5,
+	  	centerMode: false,
+	  centerPadding: '0',
+	  prevArrow: "<a href='#' class='previous-arrow'><i class='carousel-arrow carousel-arrow-prev'></i></a>",
+	    nextArrow: "<a href='#' class='next-arrow'><i class='carousel-arrow carousel-arrow-next'></i></a>",
+	  responsive: [     
+	  {
+	      breakpoint: 1024,
+	      settings: {
+	        centerMode: true,
+	      centerPadding: '40px',
+	        slidesToShow: 2,
+	      slidesToScroll: 2,
+	      }
+	    },
+	        {
+	      breakpoint: 768,
+	      settings: {
+	        centerMode: true,
+	      centerPadding: '40px',
+	        slidesToShow: 2,
+	      slidesToScroll: 2,
+	      }
+	    },
+	    {
+	      breakpoint: 600,
+
+	        settings: {
+	      centerMode: true,
+	    centerPadding: '40px',
+	        slidesToShow: 1,
+	    slidesToScroll: 1,
+	    dots:true,
+	    arrows:false,
+	      }
+	    }
+	  ]   
+                     
+	});
+	});	
+	$(window).on('load', function() {  
+
+	$('.js-dashboard-essentials').slick({
+	    slidesToShow: 5,
+	    slidesToScroll: 5,
+	  	centerMode: false,
+	  centerPadding: '0',
+	  prevArrow: "<a href='#' class='previous-arrow'><i class='carousel-arrow carousel-arrow-prev'></i></a>",
+	    nextArrow: "<a href='#' class='next-arrow'><i class='carousel-arrow carousel-arrow-next'></i></a>",
+	  responsive: [     
+	  {
+	      breakpoint: 1024,
+	      settings: {
+	        centerMode: true,
+	      centerPadding: '40px',
+	        slidesToShow: 2,
+	      slidesToScroll: 2,
+	      }
+	    },
+	        {
+	      breakpoint: 768,
+	      settings: {
+	        centerMode: true,
+	      centerPadding: '40px',
+	        slidesToShow: 2,
+	      slidesToScroll: 2,
+	      }
+	    },
+	    {
+	      breakpoint: 600,
+
+	        settings: {
+	      centerMode: true,
+	    centerPadding: '40px',
+	        slidesToShow: 1,
+	    slidesToScroll: 1,
+	    dots:true,
+	    arrows:false,
+	      }
+	    }
+	  ]   
+                     
+	});
+	});	
+	$(window).on('load', function() {  
+
+	$('.js-dashboard-essential-collections').slick({
+	    slidesToShow: 4,
+	    slidesToScroll: 4,
+	  	centerMode: false,
+	  centerPadding: '0',
+	  prevArrow: "<a href='#' class='previous-arrow'><i class='carousel-arrow carousel-arrow-prev'></i></a>",
+	    nextArrow: "<a href='#' class='next-arrow'><i class='carousel-arrow carousel-arrow-next'></i></a>",
+	  responsive: [     
+	  {
+	      breakpoint: 1024,
+	      settings: {
+	        centerMode: true,
+	      centerPadding: '40px',
+	        slidesToShow: 2,
+	      slidesToScroll: 2,
+	      }
+	    },
+	        {
+	      breakpoint: 768,
+	      settings: {
+	        centerMode: true,
+	      centerPadding: '40px',
+	        slidesToShow: 2,
+	      slidesToScroll: 2,
+	      }
+	    },
+	    {
+	      breakpoint: 600,
+
+	        settings: {
+	      centerMode: true,
+	    centerPadding: '40px',
+	        slidesToShow: 1,
+	    slidesToScroll: 1,
+	    dots:true,
+	    arrows:false,
+	      }
+	    }
+	  ]   
+                     
+	});
+	});		
+	</script>

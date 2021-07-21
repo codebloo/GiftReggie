@@ -1,0 +1,400 @@
+<div class="manage-registry-header">
+    <div class="container">
+		<div class="row no-gutters manage-registry-layout">
+			{% if image %}
+			<div class="col-12 col-lg-3">
+				<div class="manage-registry-photo" style="background-image:url({{ image }});">
+				<img src='{{ image }}' alt="{{ registrant | escape_html }}{% if coregistrant %} & {{ coregistrant | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Photo"/>
+			</div>
+			</div>
+			{% endif %}	
+			<div class="{% if image %}col-12 col-lg-7{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
+					<div class="registry-header-details">
+						<h2 class="registry-title">{{ registrant | escape_html }}{% if coregistrant %} & {{ coregistrant | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Registry</h2>
+						
+						<div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
+					
+						
+						{% if message %}
+							<div class="giftreggie-store-message registry-title-event-message">{{ message | escape_html | newline_to_br }}</div>
+						{% endif %}
+						{% if description %}
+							<div class="giftreggie-description registry-title-event-message">
+								{{ description | escape_html | newline_to_br }}
+							</div>
+						{% endif %}
+						{% if is_admin%}
+						<div class="reigstry-description-edit">
+							<a href="{{ proxy_url }}/registry/{{ id }}/profile#weddingDetails" class="registry-title-edit">{{ 'gift-reggie.registry.edit_message' | t }}</button>
+						</div>
+						{% endif %}
+				
+				
+						
+						<div class="registry-title-url">
+							<label class="registry-title-link-label">Registry Link:</label> 
+							<span>https://{{ shop.domain }}{{ proxy_url }}/registry/{{ id }}</span>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+</div>
+
+
+{% if products.size == 0 %}
+<div class="giftreggie-no-products">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="no-products-content">
+					<h3 class="h3 color-berry">{{ 'gift-reggie.wishlist.no_products' | t }} </h3>
+					{% if is_admin %}
+					<a href='{{ browsing_link }}' class="button cta add0b">Start by Adding Gifts</a>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+
+{% if is_admin %}
+	{% if products.size > 0 %}
+		{% if max_pages > 1 %}
+		{%- comment -%}Pagination options{%- endcomment -%}
+			<div class="giftreggie-items-page">
+				{{ 'gift-reggie.items_per_page' | t }}
+				<select id="per-page-selector">
+					<option>25</option>
+					<option>50</option>
+					<option>100</option>
+				</select>
+			</div>
+		{% endif %}
+
+<div class="full-registry">
+	<form method="post" class="giftreggie-registry-form">
+	<input type='hidden' name='extra' value='{{ extra | escape_html }}'/>
+	<div class="container">
+		<div class="row">
+			<div class="col-12 col-lg-3">Filter</div>
+			<div class="col-12 col-lg-9">
+				<div class="row">
+				{% for product in products %}
+				<div class="col-6 col-lg-4">
+					<div class="single-registry-product">
+						<input type='hidden' name="item-id" value="{{ product.id }}">
+						
+						<div class="single-registry-product-photo">
+							<img src='{{ product.image | img_url: "400x" }}' alt="{{product.title}} from {{product.vendor}}"/>
+						</div>
+						<div class="single-registry-product-text">
+							<div class="vendor-name">{{product.vendor}}</div>
+							<div class="product-name">{{product.title}}</div>
+							<div class="product-price">{{ (product.price + bold_price) | money }}</div>
+							<div class="product-status">
+								<div class="requested">
+									<span>{{ 'gift-reggie.registry.wants' | t }}</span>
+									<span></span>
+								</div>
+								<div class="has">
+									<span>{{ 'gift-reggie.registry.has' | t }}</span>
+									<span></span>
+								</div>
+								<div class="needs">
+									<span>{{ 'gift-reggie.registry.needs' | t }}</span>
+									<span></span>
+								</div>
+							</div>
+							<div class="single-registry-prduct-buttons">
+								Buttons
+							</div>
+						</div>
+						<div class="single-registry-manage">
+							<!-- If we have a 'has' quantity associated with this, remove the option to remove the item, but keep it available in the back-end for those special cases. -->
+							{% if product.has %}
+								&nbsp;
+							{% else %}
+								<button name='action' value="delete-{{ product.id }}" class="button cta 	">&times;</button>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<div id="status-bar" style="display:none;">{{ 'gift-reggie.cart-update.success' | t }}</div>
+						<div class="action-buttons">
+							<button id='discard-changes' class="button cta">{{ 'gift-reggie.terms.discard_changes' | t }}</button>
+							<button id='save-changes' name='action' value='update' class="button cta">{{ 'gift-reggie.terms.save_changes' | t }}</button>
+							{%- comment -%}Script for handling these discard/save- changes buttons{%- endcomment -%}
+							<script type='text/javascript'>
+								window.jqReady.push(function(jQuery) {
+									(function($) {
+										$('#view-registry input').keypress(function (e) {
+											if (e.which == 13) {
+												$('#save-changes').click();
+												return false;
+											}
+										});
+										$('#discard-changes').click(function() {
+											window.location.href = window.location.href;
+											return false;
+										});
+									})(jQuery);
+								});
+							</script>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					{% if max_pages > 1 %}
+						<div id="pagination-div"></div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+	</form>
+	{%- comment -%}Include code from annother GR template{%- endcomment -%}
+	{% include 'proxy_cart_update' %}
+	<div class='giftreggie-browse-add-products'>
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<a href='{{ browsing_link }}' class="color-berry h3">{{ 'gift-reggie.registry.browsing' | t }}</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endif %}
+
+{% if is_admin %}
+
+
+	
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				{% for product in products %}
+					
+					<div class="registry-variant">
+						<input type='text' class="giftreggie-line-number" name='position-{{ product.id }}' value='{{ product.line_number }}' maxlength=3 size=3 style="width: auto!important"/>
+					
+					
+							{% if product.still_needs > 0 %}
+								<a class="giftreggie-item-name" href='{% if testing %}/mock{% endif %}/products/{{ product.handle | escape_html }}?variant={{ product.variant_id }}'>{{ product.title | escape_html }}</a>
+							{% else %}
+								<span class="giftreggie-item-name">{{ product.title | escape_html }}</span>
+							{% endif %}
+							{% if product.properties %}
+								<div class="properties">
+									{% assign bold_price = 0 %}
+									{% for property in product.properties %}
+										{% if property.name contains '_boldVariantPrices' %}
+											{% assign bold_price = property.value %}
+										{% endif %}
+										{% if property.name contains 'bold' %}
+											<div style='display: none' class="property property-{{ property.name | handleize }}">
+												<span class="property-name">{{ property.name | escape_html }}</span>
+												<span class="property-value">{{ property.value | escape_html }}</span>
+											</div>
+										{% else %}
+											<div class="property property-{{ property.name | handleize }}">
+												<span class="property-name">{{ property.name | escape_html }}</span>
+												<span class="property-value">{{ property.value | escape_html }}</span>
+											</div>
+										{% endif %}
+									{% endfor %}
+								</div>
+							{% endif %}
+					
+			
+						<input type='text' class="giftreggie-want-quantity" name="want-quantity-{{ product.id }}" maxlength=4 size=3 value='{{ product.wants }}' style="width: auto!important"/>
+						</div>
+					{{ product.has }}
+						<p class="giftreggie-needs-quantity">{{ product.still_needs }}</p>
+						<input type='hidden' class='variant-id' name='variant-id' value='{{ product.variant_id }}'/>
+						<input type='hidden' class='product-id' name='product-id' value='{{ product.product_id }}'/>
+			
+				{% endfor %}
+				</div>
+						</div>
+								</div>
+		
+
+			
+		
+	{% endif %}
+	
+	
+	
+{%- comment -%}
+If not admin, use the "pretty" grid layout instead of table layout.
+{%- endcomment -%}
+{% else %}
+
+
+	{%- comment -%} Code for product grid {%- endcomment -%}
+	{% if products.size > 0 %}
+		{%- comment -%}Pagination{%- endcomment -%}
+		{% if max_pages > 1 %}
+			<div class="giftreggie-items-page">
+			{{ 'gift-reggie.items_per_page' | t }}
+				<select id="per-page-selector">
+					<option>25</option>
+					<option>50</option>
+					<option>100</option>
+				</select>
+			</div>
+		{% endif %}
+		<div class="giftreggie-grid-container">
+			<div class="container">
+				<div class="row">
+				
+			{% for product in products %}
+			<div class="col-12 col-lg-3">
+				<div class="giftreggie-product-container">
+					{%- comment -%}
+					This tile represents the product image and info, but not the add to cart button
+					Clicking this tile directs to product page
+					{%- endcomment -%}
+					<a class="giftreggie-product-link" href="{% if testing %}/mock{% endif %}/products/{{ product.handle | escape_html }}?variant={{ product.variant_id }}">
+					<div class="giftreggie-product-tile">
+
+						{%- comment -%}This container holds the product image, cropped to a square aspect ratio{%- endcomment -%}
+						<div class="giftreggie-product-image-container">
+							<img src='{{ product.image | img_url: "300x300"}}' alt="">
+						</div>
+
+						{%- comment -%}This container holds the product's name, variant, price, and "wants/still needs" information{%- endcomment -%}
+						<div class="giftreggie-product-description-container">
+							<div class="giftreggie-product-name-wrapper">
+								{% assign full_title = product.title | split: ' - '%}
+								<p class="giftreggie-product-name">{{ full_title[0] }}</p>
+								<p class="giftreggie-product-variant-name"> 
+								{%- comment -%}Display just the varriant name without product name{%- endcomment -%}
+									{% for title in full_title %}
+										{% if title != full_title[0] %}
+											{{ title }}
+										{% endif %}
+									{% endfor %}
+                                    {% if product.properties %}
+                                    <div class="properties">
+                                        {% assign bold_price = 0 %}
+                                        {% for property in product.properties %}
+                                            {% if property.name contains '_boldVariantPrices' %}
+                                                {% assign bold_price = property.value %}
+                                            {% endif %}
+                                            {% if property.name contains 'bold' %}
+                                                <div style='display: none' class="property property-{{ property.name | handleize }}">
+                                                    <span class="property-name">{{ property.name | escape_html }}</span>
+                                                    <span class="property-value">{{ property.value | escape_html }}</span>
+                                                </div>
+                                            {% else %}
+                                                <div class="property property-{{ property.name | handleize }}">
+                                                    <span class="property-name">{{ property.name | escape_html }}</span>
+                                                    <span class="property-value">{{ property.value | escape_html }}</span>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+						            {% endif %}
+								</p>
+							</div>
+							<div class="giftreggie-product-price-container">
+								<p class="giftreggie-product-price">{{product.price | money}}</p>
+							</div>
+							<div class="giftreggie-wants-needs-container">
+								{% if product.still_needs > 0 %}
+									Requested: {{product.wants}} ·
+									Still Needs: {{product.still_needs}}
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					</a>
+
+					{%- comment -%}This container holds the add to cart button and quantity input{%- endcomment -%}
+					<div class="giftreggie-product-cart-modifier-container">
+						<form method="post" class="giftreggie-registry-form">
+							{%- comment -%}Pass product identification information to form as hidden inputs{%- endcomment -%}
+							<input type='hidden' name="item-id" value="{{ product.id }}">
+							<input type='hidden' class='variant-id' name='variant-id' value='{{ product.variant_id }}'/>
+							<input type='hidden' class='product-id' name='product-id' value='{{ product.product_id }}'/>
+							{% if product.still_needs < 1 %}
+								<span class="giftreggie-product-cart-message"> ✓ Purchased </span>
+							{% elsif product.inventory_quantity < 1 %}
+								<span class="giftreggie-product-cart-message"> Sold Out </span>
+							{% else %} {%- comment -%} If product not sold out and still is needed, display buttons{%- endcomment -%}
+
+								{%- comment -%}
+								Assign each quantity input a unique id tied to specific product variant
+								This way we can find that specific quantity when we add it to cart
+								{%- endcomment -%}
+								{% assign quantity_id = product.variant_id | prepend: 'registry-variant-quantity-' %}
+								<input type='number' class='giftreggie-registry-variant-quantity' maxlength=3 id='{{ quantity_id }}' value="1" min="1" max="{{ product.still_needs }}"/>
+
+								<button class="giftreggie-add-to-cart btn">{{ 'gift-reggie.cart-update.add' | t }}</button>
+							{% endif %}
+						</form>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+			</div>
+			</div>
+		</div>
+	{% endif %}
+
+	
+{% endif %}
+
+<script type='text/javascript'>	
+	window.jqReady.push(function(jQuery) {		
+		(function( $ ) {
+			createPagination($('#pagination-div'), {{ max_pages }});
+
+			$('#per-page-selector').change(function() {
+				var url = window.location.href.replace(/[\?\&](limit|page)=\d+/g, "").replace(/^([^\?])+&/, "$1\?");
+				url += (url.indexOf("?") == -1) ? "?" : "&";
+				window.location = url + "limit=" + $(this).val();
+			});
+				
+			var vars = getUrlVars();
+			if (vars['limit']) 
+				$('#per-page-selector').val(vars['limit']);
+
+			//when "Add to cart" is clicked, this adds to cart	
+			$('.giftreggie-add-to-cart').click(function() {
+				var variantRow = $(this).parents(".giftreggie-product-container").first();
+				var id = variantRow.find(".variant-id").val();
+
+				var prop_names = variantRow.find('.property-name');
+				var prop_values = variantRow.find('.property-value');
+				var quantityID = 'registry-variant-quantity-' + id; 
+				var quantity = document.getElementById(quantityID).value; //finds the specific product variant we want and gets the quantity
+				var properties = "";
+				for(i = 0; i < prop_names.length; ++i){
+					properties = properties + '<input name="properties[' + prop_names[i].textContent + ']" value="' + prop_values[i].textContent + '">'
+				}
+                console.log(properties);
+				$('<form method="post" action="/cart/add"><input type="hidden" name="id" value="' + id + '"/><input type="hidden" name="quantity" value="' + quantity + '"/>' + properties + '</form>').appendTo("body").submit();
+				return false;
+			});
+				
+			$('.giftreggie-registry-form').submit(function() {
+				$('.giftreggie-view-registry').each(function() {
+					var div = $(this);
+					if (!div.is(":visible")) {
+						div.find("input").remove();
+					}
+				});
+			});
+		})(jQuery);
+	});
+</script>

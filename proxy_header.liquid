@@ -45,10 +45,10 @@ window.jqReady = [(function(jQuery) {
 	window.jqReady.push(function(jQuery) {
 		(function( $ ) {
 			displayModal = function(text) {
-				var modal = $('<div class="giftreggie-modal" style="display:none; background: #FFF; font-size: 24px; line-height: 24px; border: 1px solid #000; padding: 12px; margin: auto; top: 0; bottom: 0; left: 0; right: 0; position: fixed; width: 320px; z-index: 1000;">\
+				var modal = $('<div class="giftreggie-modal" style="display:none; background: #FFF; font-size: 24px; line-height: 24px; border: 1px solid #000; padding: 18px; margin: auto; top: 0; bottom: 0; left: 0; right: 0; position: fixed; width: 320px; z-index: 1000;">\
 				<div class="giftreggie-modal-inner">\
-				<div class="giftreggie-modal-top">' + text + '</div>\
-				<div class="giftreggie-modal-bottom"><button style="margin: 8px auto; display: block; font-size: 18px; padding: 4px 8px;">OK</button></div></div></div>');
+				<div class="giftreggie-modal-top body1" style="padding-bottom:18px;">' + text + '</div>\
+				<div class="giftreggie-modal-bottom"><button class="button cta">OK</button></div></div></div>');
 				modal.appendTo('body');
 				modal.fadeIn();
 				modal.height(modal.children(".giftreggie-modal-inner").height());

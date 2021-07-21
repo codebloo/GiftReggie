@@ -27,7 +27,7 @@
 							{% endif %}
 							{% if is_admin%}
 							<div class="reigstry-description-edit">
-								<a href="{{ proxy_url }}/registry/{{ id }}/profile#weddingDetails" class="registry-title-edit">{{ 'gift-reggie.registry.edit_message' | t }}</a>
+								<a href="#weddingDetails" class="registry-title-edit">{{ 'gift-reggie.registry.edit_message' | t }}</a>
 							</div>
 							{% endif %}
 				
@@ -51,7 +51,6 @@
 			</div>
 		</div>
 	</div>
-
 	<div class="registry-quicklinks">
 		<div class="container">
 			
@@ -219,10 +218,12 @@
 					<div class="row">
 						<div class="col-12 col-lg-6">
 							<div class="registrant-box">
-							
+								<h3 class="h3 registrant-section-name">Primary Registrant</h3>
 								<div class="dashboard-input-group">
-									<label class="dashboard-label">{{ 'gift-reggie.terms.title' | t }}</label>
-									 <input class="dashboard-input title-input" name='registrant-title' type='text' maxlength="16" value="{{ registrant_title | escape_html }}" class="body1"/>
+									<label class="dashboard-label">Honorific</label>
+									<div class="title-input-wrap"> 
+										<input class="dashboard-input title-input" name='registrant-title' type='text' maxlength="16" value="{{ registrant_title | escape_html }}" class="body1"/>
+									</div>
 								</div>
 								<div class="dashboard-input-group">
 									<label class="dashboard-label">{{ 'gift-reggie.terms.first_name' | t }}</label>
@@ -237,10 +238,12 @@
 						</div>
 						<div class="col-12 col-lg-6">
 							<div class="registrant-box" id="partnerInfo">
-								
+								<h3 class="h3 registrant-section-name">Co-Registrant</h3>
 								<div class="dashboard-input-group">
-									<label class="dashboard-label">{{ 'gift-reggie.terms.title' | t }}</label>
-									<input  class="dashboard-input title-input" name='coregistrant-title' type='text' maxlength="16" value="{{ coregistrant_title | escape_html }}"/>
+									<label class="dashboard-label">Honorific</label>
+									<div class="title-input-wrap"> 
+										<input  class="dashboard-input title-input" name='coregistrant-title' type='text' maxlength="16" value="{{ coregistrant_title | escape_html }}"/>
+									</div>
 								</div>
 								<div class="dashboard-input-group">
 									<label class="dashboard-label">{{ 'gift-reggie.terms.first_name' | t }}</label>
@@ -418,7 +421,7 @@
 													<input class="dashboard-input" name='after-city' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_city | escape_html }}"/></div>
 									<div class="dashboard-input-group">
 					   								<label class="dashboard-label">{{ 'gift-reggie.terms.province' | t }}</label> 
-													<input class="dashboard-input" name='after-province' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_province | escape_html }}"/></div>
+													<input class="dashboard-input" name='after-province' type='text' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %} value="{{ after_province | escape_html }}"/></div> 
 									<div class="dashboard-input-group">
 					   								<label class="dashboard-label">{{ 'gift-reggie.terms.country' | t }}</label> 
 													<select class="dashboard-input" name='after-country' class='country-selector' {% if in_store_pickup %}disabled{% endif %} {% unless after_address %}disabled{% endunless %}>{% include 'proxy_countries' %}</select
@@ -434,12 +437,14 @@
  		</div>
 		{% endunless %}
 
+
+			
+			
+		</div>
  		</div>
  	</div>
-	 
 	
-	
-	
+
 	
 </div>
 <script>
@@ -539,4 +544,52 @@
 			}, 2000);
 		  
 			  	});
+				
+				
+				
+				
+				$(window).on('load', function() {  
+
+				$('.js-dashboard-essentials').slick({
+				    slidesToShow: 4,
+				    slidesToScroll: 4,
+				  	centerMode: false,
+				  centerPadding: '0',
+				  prevArrow: "<a href='#' class='previous-arrow'><i class='carousel-arrow carousel-arrow-prev'></i></a>",
+				    nextArrow: "<a href='#' class='next-arrow'><i class='carousel-arrow carousel-arrow-next'></i></a>",
+				  responsive: [     
+				  {
+				      breakpoint: 1024,
+				      settings: {
+				        centerMode: true,
+				      centerPadding: '40px',
+				        slidesToShow: 2,
+				      slidesToScroll: 2,
+				      }
+				    },
+				        {
+				      breakpoint: 768,
+				      settings: {
+				        centerMode: true,
+				      centerPadding: '40px',
+				        slidesToShow: 2,
+				      slidesToScroll: 2,
+				      }
+				    },
+				    {
+				      breakpoint: 600,
+       
+				        settings: {
+				      centerMode: true,
+				    centerPadding: '40px',
+				        slidesToShow: 1,
+				    slidesToScroll: 1,
+				    dots:true,
+				    arrows:false,
+				      }
+				    }
+				  ]   
+                                 
+				});
+				});		
 		</script>
