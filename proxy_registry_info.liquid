@@ -219,7 +219,12 @@
 						<div class="col-12 col-lg-6">
 							<div class="registrant-box">
 								<h3 class="h3 registrant-section-name">Primary Registrant</h3>
-						
+								<div class="dashboard-input-group" style="display:none;">
+									<label class="dashboard-label">Honorific</label>
+									<div class="title-input-wrap"> 
+										<input class="dashboard-input title-input" name='registrant-title' type='text' maxlength="16" value="{{ registrant_title | escape_html }}" class="body1"/>
+									</div>
+								</div>
 								<div class="dashboard-input-group">
 									<label class="dashboard-label">{{ 'gift-reggie.terms.first_name' | t }}</label>
 										 <input  class="dashboard-input" name='registrant-first' type='text' {% unless registrant_first %}placeholder="{{ customer.first_name }}"{% endunless %} value="{% if registrant_first %}{{ registrant_first | escape_html }}{% else %}{{ customer.first_name }}{% endif %}"/>
@@ -234,7 +239,12 @@
 						<div class="col-12 col-lg-6">
 							<div class="registrant-box" id="partnerInfo">
 								<h3 class="h3 registrant-section-name">Co-Registrant</h3>
-							
+								<div class="dashboard-input-group"  style="display:none;">
+									<label class="dashboard-label">Honorific</label>
+									<div class="title-input-wrap"> 
+										<input  class="dashboard-input title-input" name='coregistrant-title' type='text' maxlength="16" value="{{ coregistrant_title | escape_html }}"/>
+									</div>
+								</div>
 								<div class="dashboard-input-group">
 									<label class="dashboard-label">{{ 'gift-reggie.terms.first_name' | t }}</label>
 									<input  class="dashboard-input" name='coregistrant-first' type='text' value="{{ coregistrant_first | escape_html }}"/>
