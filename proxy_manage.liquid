@@ -15,11 +15,13 @@
      	   <div class="container">
 		 
   		  {% if customer_account_can_create %}
-  		  <div class="row">
+		  	{% if managed_registries.size < 1 %}
+  		 	 <div class="row">
 	  		  <div class="col-12 col-lg-6">
 	  				<a href='{{ proxy_url }}/create' class="button cta">Create New Registry</a>
 	  		  </div>
   	  	  </div>
+		  {% endif %}
   		  {% endif %}
 		  <div class="row">
 			  <div class="col-12">
