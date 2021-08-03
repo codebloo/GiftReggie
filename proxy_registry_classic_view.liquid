@@ -70,8 +70,43 @@
 							<div class="summary-item summary-date">
 								<i></i>
 								<div class="summary-text">
-								<span class="summary-title">{{ event_datetime | date }} </span>
-								{{ "now" | date: "%Y-%m-%d %H:%M" }
+
+<span class="summary-title">		
+<script type = "text/javascript" >
+    
+var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+var yyyy = today.getFullYear();
+
+today = mm + '/' + dd + '/' + yyyy;
+    
+// JavaScript program to illustrate 
+// calculation of no. of days between two date 
+  
+    // To set two dates to two variables
+var date1 = new Date(today);
+var date2 = new Date("{{ event_datetime |  date: "%m/%d/%y" }}");
+  
+// To calculate the time difference of two dates
+var Difference_In_Time = date2.getTime() - date1.getTime();
+  
+// To calculate the no. of days between two dates
+var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+// Remove decimal places
+var myTrunc = Math.trunc( Difference_In_Days );
+
+//To display the final no. of days (result)
+document.write(myTrunc+ " ");
+  
+  
+</script> Days
+</span>
+								
+								
+								
+
 								<span class="summary-subtitle">until your big day</span>
 								</div>
 							</div>
