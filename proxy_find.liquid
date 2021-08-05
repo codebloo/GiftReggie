@@ -66,9 +66,7 @@
 				{% if shop.customer_accounts_enabled %}
 					{% if customer %}
 						{{ 'gift-reggie.please_wait_redirect' | t }}
-					{% else %}
-            {% capture checkout_url %}{{ proxy_url }}/find?lang={{ language }}{% endcapture %}
-						<p><a href='{% if language %}/{{ language }}{% endif %}/account/login?checkout_url={{ checkout_url | url_escape }}' class="body1 text-link">{{ 'gift-reggie.not_logged' | t }}</a></p>
+				
 					{% endif %}
 				{% endif %}
 			{% endif %}
