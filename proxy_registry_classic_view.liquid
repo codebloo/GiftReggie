@@ -20,7 +20,7 @@
 			{% endif %}	
 			<div class="{% if image %}col-12 col-lg-9{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
 					<div class="registry-header-details">
-						<h2 class="registry-title">{{ registrant | escape_html }}{% if coregistrant %} & {{ coregistrant | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Registry</h2>
+							<h2 class="registry-title">{% if coregistrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s{% else %}Your{% endif %} Registry</h2> q
 						
 					
 						
@@ -115,7 +115,7 @@ document.write(myTrunc+ " ");
 								<div class="summary-text">
 								<span class="summary-title"> 
 									{{item_count}}
-									 Gifts</span>
+									 Gifts / {{customer.metafields.quiz.guest_count}} Recommended</span>
 								<span class="summary-subtitle">added to your registry</span>
 								</div>
 							</div>
@@ -318,7 +318,7 @@ document.write(myTrunc+ " ");
 					{% include 'manage-registry-collection-popup' %}
 				{% endif %}
 				
-				<form method="post" class="giftreggie-registry-form">
+				<form method="post" class="giftreggie-registry-form" id="registryForm">
 					<input type='hidden' name='extra' value='{{ extra | escape_html }}'/>
 	
 					<div class="giftreggie giftreggie-view-registry add-gifts-form sort-products sortable">
@@ -357,7 +357,10 @@ document.write(myTrunc+ " ");
 		  								{% endif %}
 								
 		  							</div>
-		  						      <img src="{{ product.image | img_url: '450x450' }}" class="gift-item-image" alt="{{ product.featured_image.alt | escape }}">
+		  							    
+		  						      <div class="registry-product-image">
+		  						      <img src="{{ product.image | img_url: '400x400' }}" class="gift-item-image" alt="{{ product.featured_image.alt | escape }}">
+		  						    </div>
 		  						  </div>
 								
 								  	<div class="text-wrapper">
@@ -403,9 +406,18 @@ document.write(myTrunc+ " ");
 											<span>{{ product.still_needs }}</span>
 										</div>
 										{% if product.still_needs > 0 %}
-										<button class="button cta buy-registry-item giftreggie-add-to-cart js-go-cart-add-to-cart add-to-cart" data-add-to-cart>
-											{{ 'gift-reggie.cart-update.add' | t }}
-										</button>
+										
+										<button name="action" value="update" class="save-registry-item button cta"  form="registryForm">Update</button>
+										<script type="text/javascript">
+    $(document).ready(function() {
+       $(".save-registry-item").click(function() {
+           $("#registryForm").submit();
+       });
+    });
+</script>
+										{% else %}
+										<div class="button cta outline-button">Purchased</div>
+										
 										{% endif %}
 									</div>
 								</div>
@@ -464,174 +476,7 @@ document.write(myTrunc+ " ");
 					{% endif %}
 					<div id="status-bar" style="display:none;">{{ 'gift-reggie.cart-update.success' | t }}</div>
 				</form>
-					{% comment %}
 				
-				<form method="post" class="giftreggie-registry-form">
-					<input type='hidden' name='extra' value='{{ extra | escape_html }}'/>
-					<div class="giftreggie-view-registry add-gifts-form" id="view-registry">
-						
-						{% for product in products %}
-						{% assign tags = product.tags | split: ", " %}
-						<div class="registry-gift-item product-grid-item mix {% for tag in tags %} {{tag | downcase}}{% endfor %}">
-							<input type='hidden' name="item-id" value="{{ product.id }}">
-							<input type='hidden' class='variant-id' name='variant-id' value='{{ product.variant_id }}'/>
-							<input type='hidden' class='product-id' name='product-id' value='{{ product.product_id }}'/>
-							
-						  <div class="product-grid-item-content">
-				
-						  	<div class="image-wrapper">
-							<div class="rating-badge badge-{{product.metafields.ratingvalue.ratingvalue}}">
-							    {% if product.metafields.rating.rating %}
-							     {{product.metafields.rating.rating}}
-							     {% else %}
-							     N/A
-							     {% endif %}
-							</div>
-							<div class="photo-badges">
-								<a href="{{ product.image}}" data-lity class="enlarge-gift-item">
-									<i class="fa fa-arrows" aria-hidden="true"></i>
-								</a>
-								{% if is_admin %}
-								{% unless product.has %}
-								<button name='action' value="delete-{{ product.id }}" class="delete-gift-item">
-									<i class="fa fa-trash-o" aria-hidden="true"></i>
-								</button>
-								{% endunless %}
-								{% endif %}
-								
-							</div>
-						  
-						      <img src="{{ product.image | img_url: '450x450' }}" class="gift-item-image" alt="{{ product.featured_image.alt | escape }}">
-						
-						  </div>
-						  	<div class="text-wrapper">
-							  <div class="gift-item-vendor">{{ product.vendor | escape_html }}</div>
-						    	<h4 class="product-grid-name h3">
-								<a href="{% if testing %}/mock{% endif %}{% if language %}/{{ language }}{% endif %}/products/{{ product.handle | escape_html }}" class="color-berry product-grid-title gift-item-name">{{ product.title | escape_html }}</a>
-							</h4>
-							{% if product.properties %}
-								<div class="properties">
-								    {% assign bold_price = 0 %}
-									{% for property in product.properties %}
-									 {% if property.name is '_boldVariantPrices' %}
-									    {% assign bold_price = property.value %}
-									 {% endif %}
-									 {% if property.name contains 'bold' %}
-									        <div style='display: none' class="property property-{{ property.name | handleize }}">
-	    										<span class="property-name">{{ property.name | escape_html }}</span>
-	    										<span class="property-value">{{ property.value | escape_html }}</span>
-	    									</div>
-									    {% else %}
-	    									<div class="property property-{{ property.name | handleize }}">
-	    										<span class="property-name">{{ property.name | escape_html }}</span>
-	    										<span class="property-value">{{ property.value | escape_html }}</span>
-	    									</div>
-										{% endif %}
-									{% endfor %}
-								</div>
-							{% endif %}
-						      	<div class="color-berry body2 gift-item-price">
-									<span class='money'>{{ (product.price + bold_price) | money }}</span>
-								</div>
-						    </div>
-	
-						  </div>
-						  
-								
-									<div class="manage-registry-item">
-										<div class="wants gift-item-requested">
-										<span>Requested:</span>
-										{% if is_admin %}
-										<input type='text' class="giftreggie-want-quantity" name="want-quantity-{{ product.id }}" maxlength=3 value='{{ product.wants }}'/>{% else %}
-										<span>{{ product.wants }}</span>
-										{% endif %}
-									</div>
-							
-									<div class="needs gift-item-needed">
-										<span>Still Needed:</span>
-										<span>{{ product.still_needs }}</span>
-									</div>
-									
-								
-									
-									{% if product.still_needs > 0 %}
-									<button class="button cta buy-registry-item giftreggie-add-to-cart">
-										{{ 'gift-reggie.cart-update.add' | t }}
-									</button>
-									{% endif %}
-									
-								</div>
-						  
-						</div>
-				
-						{% endfor %}
-					</div>
-		
-					{% if is_admin %}
-						<div class="action-buttons manage-registry-buttons">
-							<button id='discard-changes' class="button cta">{{ 'gift-reggie.terms.discard_changes' | t }}</button>
-							<button id='save-changes' name='action' value='update' class="button cta">{{ 'gift-reggie.terms.save_changes' | t }}</button>
-						</div>
-						<script type='text/javascript'>
-							window.jqReady.push(function(jQuery) {
-								(function($) {
-									$('#view-registry input').keypress(function (e) {
-										if (e.which == 13) {
-											$('#save-changes').click();
-											return false;
-										}
-									});
-									$('#discard-changes').click(function() {
-										window.location.href = window.location.href;
-										return false;
-									});
-								})(jQuery);
-							});
-						</script>
-					{% else %}
-	
-						{% if registry_notes %}
-						<div class="giftreggie-notes">
-							<h4 class="h4 gift-notes-label">{{ 'gift-reggie.cart-update.note' | t }}</h4>
-							<textarea name='note' class="gift-notes-textarea">{{ cart.note | escape }}</textarea>
-						</div>
-						{% endif %}
-		
-						<div class="action-buttons manage-registry-buttons">
-							<button id="registry-update-cart" class="button cta">{{ 'gift-reggie.cart-update.update' | t }}</button>
-							{% include 'snippet-giftreggie-checkout-button' %}
-						</div>
-							<script type='text/javascript'>
-								window.jqReady.push(function(jQuery) {
-									(function($) {
-										$('.registry-variant-quantity').keypress(function (e) {
-											if (e.which == 13) {
-												$('#registry-update-cart').click();
-												return false;
-											}
-										});
-									})(jQuery);
-								});
-							</script>
-					{% endif %}
-		
-		
-					{% if max_pages > 1 %}
-					<div class="registry-pagination">
-						<div class="container">
-							<div class="row">
-								<div class="col-12">
-									<div id="pagination-div"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-					{% endif %}
-		
-					<div id="status-bar" style="display:none;">{{ 'gift-reggie.cart-update.success' | t }}</div>
-					<input type='hidden' name='extra' value='{{ extra | escape_html }}'/>
-				</form>
-				{% endcomment %}
 			</div>
 		</div>
 	</div>

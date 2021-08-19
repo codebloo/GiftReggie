@@ -6,29 +6,28 @@
 				{% if image %}
 				<div class="col-12 col-lg-3">
 					<div class="manage-registry-photo" style="background-image:url({{ image }});">
-					<img src='{{ image }}' alt="{{ registrant_first | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Photo"/>
-				</div>
+						<img src='{{ image }}' alt="{{ registrant_first | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Photo"/>
+					</div>
 				</div>
 				{% endif %}	
+
 				<div class="{% if image %}col-12 col-lg-9{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
-						<div class="registry-header-details">
-							<h2 class="registry-title">{% if coregistrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s{% else %}Your{% endif %} Registry</h2>
-						
-							<div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
+					<div class="registry-header-details">
+						<h2 class="registry-title">{% if coregistrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s{% else %}Your{% endif %} Registry</h2>
 					
-						
-							{% if message %}
-								<div class="giftreggie-store-message registry-title-event-message">{{ message | escape_html | newline_to_br }}</div>
-							{% endif %}
-							{% if description %}
-								<div class="giftreggie-description registry-title-event-message">
-									{{ description | escape_html | newline_to_br }}
-								</div>
-							{% endif %}
-						
-				
-						</div>
+						<div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
+
+						{% if message %}
+							<div class="giftreggie-store-message registry-title-event-message">{{ message | escape_html | newline_to_br }}</div>
+						{% endif %}
+
+						{% if description %}
+							<div class="giftreggie-description registry-title-event-message">
+								{{ description | escape_html | newline_to_br }}
+							</div>
+						{% endif %}
 					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -53,15 +52,13 @@
 							</a>
 						</div>
 						<div class="quick-link bank-details">
-							<a href="#">
+							<a href="#" data-featherlight="#bankModal">
 								<div class="quick-icon">
 									<i class="icon-bank"></i>
 								</div>
+
 								<div class="quick-text">Edit Cash Fund Details</div>
-								
 							</a>
-							
-							
 						</div>
 						<div class="quick-link partner-info">
 							<a href="#partnerInfo">
@@ -90,13 +87,12 @@
 					</div>
 				 </div>
         	 </div>
-			 
 	 	</div>
+
 		{% include 'registry-bank-details' %}
  	</div>
-	 
-	 {% endif %}
-	 
+	{% endif %}
+
  	<div class="registry-dashboard">
  		<div class="container">
  			{% if allow_passwords %}
@@ -143,7 +139,7 @@
 						<div class="col-12">
 								<div class="dashboard-input-group">
 									<label class="dashboard-label">{{ 'gift-reggie.registry-profile.public_message' | t }}</label> 
-								<textarea name='registry-description' class="dashboard-input">{{ description | escape_html }}</textarea></>
+								<textarea name='registry-description' class="dashboard-input" maxlength="200">{{ description | escape_html }}</textarea></>
 							</div>
 						</div>
 					</div>
@@ -237,7 +233,7 @@
  		</div>
  		<div class="row">
  			<div class="col-12">
-				<div class="contact-info">
+				<div class="contact-info" id="shippingAddress">
 					<h3 class="dashboard-form-title">Shipping Address</h3>
 	       		 	<div class="row">
 	   		 		<div class="col-12">
@@ -309,11 +305,9 @@
 				 </div>
 			 </div>
  		</div>
-		
-	
-		
+
 		{% unless force_pickup %}
- 		<div class="row">
+ 		<div class="row ">
  			<div class="col-12">
 				<div class="shipping-prefs">
 					<h3 class="dashboard-form-title">Shipping Preferences</h3>
@@ -349,7 +343,7 @@
 		{% unless force_pickup %}
  		<div class="row d-none">
  			<div class="col-12">
-				<div class="gift-shipping" id="shippingAddress">
+				<div class="gift-shipping" >
 					<h3 class="dashboard-form-title">{{ 'gift-reggie.registry-profile.shipping_info' | t }}</h3>
 						<div class="row">
 							<div class="col-12 col-lg-6">
@@ -417,8 +411,8 @@
 			
 			
 		</div>
- 		</div>
  	</div>
+</div>
 	
 
 	
