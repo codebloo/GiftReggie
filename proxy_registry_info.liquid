@@ -2,10 +2,10 @@
 	{% if is_admin %}
 	<div class="manage-registry-header">
 	    <div class="container">
-			<div class="row no-gutters manage-registry-layout">
+			<div class="row no-gutters manage-registry-layout align-items-center">
 				{% if image %}
 				<div class="col-12 col-lg-3">
-					<div class="manage-registry-photo" style="background-image:url({{ image }});">
+					<div class="manage-registry-photo">
 						<img src='{{ image }}' alt="{{ registrant_first | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Photo"/>
 					</div>
 				</div>

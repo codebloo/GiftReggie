@@ -10,10 +10,10 @@
 
 <div class="manage-registry-header">
     <div class="container">
-		<div class="row no-gutters manage-registry-layout">
+		<div class="row no-gutters manage-registry-layout align-items-center">
 			{% if image %}
 			<div class="col-12 col-lg-3">
-				<div class="manage-registry-photo" style="background-image:url({{ image }});">
+				<div class="manage-registry-photo">
 				<img src='{{ image }}' alt="{{ registrant | escape_html }}{% if coregistrant %} & {{ coregistrant | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s Photo"/>
 			</div>
 			</div>
@@ -115,7 +115,7 @@ document.write(myTrunc+ " ");
 								<div class="summary-text">
 								<span class="summary-title"> 
 									{{item_count}}
-									 Gifts / {{customer.metafields.quiz.guest_count}} Recommended</span>
+									 Gifts / {{customer.metafields.quiz.guestCount}} Recommended</span>
 								<span class="summary-subtitle">added to your registry</span>
 								</div>
 							</div>
@@ -546,23 +546,7 @@ document.write(myTrunc+ " ");
 	
 	<script>
 		
-		function copyToClipboard(element) {
-		  var $temp = $("<input>");
-		  $("body").append($temp);
-		  $temp.val($(element).text()).select();
-		  	document.execCommand("copy");
-		  $temp.remove();
-			}
-		
-		$( ".js-copy-link" ).click(function() {
-			var tooltip = $('.copied-tooltip');
-			tooltip.show();
-			setTimeout(function() {
-				tooltip.fadeOut( "slow" );
-			}, 2000);
-		  
-			  	});
-				
+	
 				
 			    $(document).ready(function () {
 			         $('.filter-drop').hide();
@@ -584,16 +568,29 @@ document.write(myTrunc+ " ");
 			             effects: 'fade translateZ(-100px)'
 			         }
 			     });
+				 
+		 		function copyToClipboard(element) {
+		 		  var $temp = $("<input>");
+		 		  $("body").append($temp);
+		 		  $temp.val($(element).text()).select();
+		 		  	document.execCommand("copy");
+		 		  $temp.remove();
+		 			}
+		
+		 		$( ".js-copy-link" ).click(function() {
+		 			var tooltip = $('.copied-tooltip');
+		 			tooltip.show();
+		 			setTimeout(function() {
+		 				tooltip.fadeOut( "slow" );
+		 			}, 2000);
+		  
+		 			  	});
+				
 				
 		</script>
 				 
 				 
-				 <div class="shopping-pop" id="shoppingPop">
-				 	<div class="shopping-pop-layout">
-						
-						
-					</div>
-				 </div>
+			
 	{% include 'proxy_cart_update' %}
 	
 {% endif %}

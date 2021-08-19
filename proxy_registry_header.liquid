@@ -9,6 +9,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-12">
+						<div class="registry-nav-header d-lg-none"><i class="fal fa-plus color-white"></i> <h3 class="color-white">Registry Menu</h3></div>
                		 	<ul class="registry-nav">
 		               	 	<li class="registry-nav-link">
 			                  <a href="{{ proxy_url }}/registry/{{ id }}/profile" class="h4">Dashboard</a>
@@ -19,7 +20,7 @@
 			                </li>
               
 			               <li class="registry-nav-link">
-			                  <a href="https://everlastly.myshopify.com/collections/all" class="h4">Catalog</a>
+			                   <a href="https://everlastly.myshopify.com/collections/top-rated-starter-collection" class="h4">Starter Essentials</a>
 			                </li>
               
 			               <li class="registry-nav-link">
@@ -35,7 +36,46 @@
 			                </li>
 			              {% endif %}
 			            </ul>
-			
+					</div>
+				</div>
+			</div>
+		</div>	
+		
+		<div class="registry-header registry-header-mob d-lg-none">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<div class="registry-nav-header d-lg-none"><i class="fal fa-plus"></i> <h3>Registry Menu</h3></div>
+               		 	<ul class="registry-nav-mob">
+		               	 	<li class="registry-nav-link">
+			                  <a href="{{ proxy_url }}/registry/{{ id }}/profile" class="h4">Dashboard</a>
+			                </li>
+              
+			               <li class="registry-nav-link">
+			                  <a href="{{ proxy_url }}/registry/{{ id }}" class="h4">Manage Registry</a>
+			                </li>
+              
+			               <li class="registry-nav-link">
+			                  <a href="https://everlastly.myshopify.com/collections/top-rated-starter-collection" class="h4">Starter Essentials</a>
+			                </li>
+              
+			               <li class="registry-nav-link">
+			                  <a href="https://everlastly.myshopify.com/pages/checklist" class="h4">Checklist</a>
+			                </li>
+              
+			               <li class="registry-nav-link">
+			                  <a href="{{ proxy_url }}/registry/{{ id }}/share" class="h4">Share Registry</a>
+			                </li>
+			              {% if owner_can_see_orders %}
+			               <li class="registry-nav-link">
+			                  <a href="{{ proxy_url }}/registry/{{ id }}/orders" class="h4">Track Gifts</a>
+			                </li>
+			              {% endif %}
+			            </ul>
+					</div>
+				</div>
+			</div>
+		</div>		
 		
 			<script type='text/javascript'>
 				window.jqReady.push(function(jQuery) {
@@ -55,13 +95,19 @@
 			</script>
 		{% endif %}
 		{% unless is_admin %}
+		<div class="registry-header">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
 			<ul id="giftreggie-client-menu" class="registry-nav">
 				{% if guest_can_message %}<li class="registry-nav-link"><a href='{{ proxy_url }}/registry/{{ id }}/message'>{{ 'gift-reggie.terms.message' | t }}</a></li>{% endif %}
 			</ul>
+			</div>
+			</div>
+			</div>
+		</div>
 		{% endunless %}
-		</div>
-		</div>
-		</div>
+	</div>
 	</div>
 	
 	
