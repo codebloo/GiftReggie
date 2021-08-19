@@ -20,7 +20,7 @@
 			{% endif %}	
 			<div class="{% if image %}col-12 col-lg-9{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
 					<div class="registry-header-details">
-							<h2 class="registry-title">{% if coregistrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s{% else %}Your{% endif %} Registry</h2> q
+								<h2 class="registry-title">{% if registrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% endif %}'s{% else %}Your{% endif %} Registry</h2>
 						
 					
 						
@@ -405,20 +405,37 @@ document.write(myTrunc+ " ");
 											<span>Still Needed:</span>
 											<span>{{ product.still_needs }}</span>
 										</div>
+										{% if is_admin %}
+											{% if product.still_needs > 0 %}
+												<button name="action" value="update" class="save-registry-item button cta"  form="registryForm">Update</button>
+																					<script type="text/javascript">
+											    $(document).ready(function() {
+											       $(".save-registry-item").click(function() {
+											           $("#registryForm").submit();
+											       });
+											    });
+											</script>
+																					{% else %}
+																					<div class="button cta outline-button">Purchased</div>
+										
+																					{% endif %}
+										
+										
+									
+										{% else %}
+										
 										{% if product.still_needs > 0 %}
 										
-										<button name="action" value="update" class="save-registry-item button cta"  form="registryForm">Update</button>
-										<script type="text/javascript">
-    $(document).ready(function() {
-       $(".save-registry-item").click(function() {
-           $("#registryForm").submit();
-       });
-    });
-</script>
+										<button class="button cta buy-registry-item giftreggie-add-to-cart js-go-cart-add-to-cart add-to-cart" data-add-to-cart>{{ 'gift-reggie.cart-update.add' | t }}</button>
+										
 										{% else %}
 										<div class="button cta outline-button">Purchased</div>
 										
 										{% endif %}
+										
+										{% endif %}
+										
+									
 									</div>
 								</div>
 							</div>
@@ -432,7 +449,7 @@ document.write(myTrunc+ " ");
 							<button id='save-changes' name='action' value='update' class="button cta">{{ 'gift-reggie.terms.save_changes' | t }}</button>
 						</div>
 						<script type='text/javascript'>
-							window.jqReady.push(function(jQuery) {
+							window.jgReady.push(function(jQuery) {
 								(function($) {
 									$('#view-registry input').keypress(function (e) {
 										if (e.which == 13) {

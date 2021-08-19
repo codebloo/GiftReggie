@@ -13,7 +13,7 @@
 
 				<div class="{% if image %}col-12 col-lg-9{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
 					<div class="registry-header-details">
-						<h2 class="registry-title">{% if coregistrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% else %}{{ 'gift-reggie.terms.none' | t }}{% endif %}'s{% else %}Your{% endif %} Registry</h2>
+						<h2 class="registry-title">{% if registrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% endif %}'s{% else %}Your{% endif %} Registry</h2>
 					
 						<div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
 
@@ -307,7 +307,7 @@
  		</div>
 
 		{% unless force_pickup %}
- 		<div class="row ">
+ 		<div class="row">
  			<div class="col-12">
 				<div class="shipping-prefs">
 					<h3 class="dashboard-form-title">Shipping Preferences</h3>
@@ -328,8 +328,7 @@
 						<select class="dashboard-input" name="extra_selector" id="extra_selector" onchange='checkvalue(this.value)'> 
 							<option selected="selected" 
 									value="Ship items as they are ordered">Ship items as they are ordered</option>
-							 <option value="Ship items for the event date">Ship items for the event date</option>
-							 <option value="other">Ship items for this date:</option>
+							 <option value="Ship items for the event date">Ship items after the event date</option>
 						 </select> 
 						 <input 
 						 	name="extra" 
