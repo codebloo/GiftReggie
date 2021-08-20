@@ -146,7 +146,8 @@ document.write(myTrunc+ " ");
 					<div class="no-products-content">
 						<h3 class="h3 color-berry">{{ 'gift-reggie.wishlist.no_products' | t }} </h3>
 						{% if is_admin %}
-						<a href='{{ browsing_link }}' class="button cta add0b">Start by Adding Gifts</a>
+						<a href="#chooseShop" class="button cta add0b" data-lity>Start by Adding Gifts</a>
+						{% include 'manage-registry-collection-popup' %}
 						{% endif %}
 					</div>
 				</div>
@@ -176,7 +177,8 @@ document.write(myTrunc+ " ");
 		</div>
 	</div>
 	{% endif %}
-	
+{% endif %}
+{% if products.size > 0 %}	
 <div class="full-registry">
 	<div class="container">
 		<div class="row">
@@ -498,7 +500,7 @@ document.write(myTrunc+ " ");
 		</div>
 	</div>
 </div>
-
+{% endif %}
 
 
 {% include 'manage-registry-carousels' %}
@@ -589,11 +591,9 @@ document.write(myTrunc+ " ");
 				
 		</script>
 				 
-				 
-			
+		
 	{% include 'proxy_cart_update' %}
 	
-{% endif %}
 
 
 <script>

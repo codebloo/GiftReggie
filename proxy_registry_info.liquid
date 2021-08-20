@@ -48,7 +48,7 @@
 								<div class="quick-icon">
 									<i class="icon-address"></i>
 								</div>
-								<div class="quick-text">Add Your Shipping Address</div>
+								<div class="quick-text">Edit Your Shipping Address</div>
 							</a>
 						</div>
 						<div class="quick-link bank-details">
@@ -57,7 +57,7 @@
 									<i class="icon-bank"></i>
 								</div>
 
-								<div class="quick-text">Edit Cash Fund Details</div>
+								<div class="quick-text">{% if customer.metafields.cash_fund %}Edit{% else %} Add{% endif %} Cash Fund Details</div>
 							</a>
 						</div>
 						<div class="quick-link partner-info">
@@ -65,7 +65,7 @@
 								<div class="quick-icon">
 									<i class="icon-bed"></i>
 								</div>
-								<div class="quick-text">Add Partner Info</div>
+								<div class="quick-text">{% if coregistrant_first %}Edit{% else %} Add{% endif %} Partner Info</div>
 							</a>
 						</div>
 						<div class="quick-link champagne-registry">
