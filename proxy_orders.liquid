@@ -7,33 +7,56 @@
 	}
 </style>
 
+
+
 <div class="container">
 	<div class="row">
 		<div class="col-12">
-{% if orders.size > 0 %}
-<table class='giftreggie-orders'>
+			<h2 class="text-center h2 color-berry">Track Gifts</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<ul>
+				<li><a href="#">Download thank you list</a></li>
+				<li><a href="#">Refer a friend</a> (what app are you using?)</li>
+			</ul>
+			
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			{% if orders.size > 0 %}
+
+			
+				<table class='giftreggie-orders'>
 	<tr>
 		<th>{{ 'gift-reggie.terms.order_number' | t }}</th>
-		<th>{{ 'gift-reggie.terms.date' | t }}</th>
-		<th>{{ 'gift-reggie.terms.user' | t }}</th>
-		<th>{{ 'gift-reggie.terms.email' | t }}</th>
 		<th>{{ 'gift-reggie.terms.purchase' | t }}</th>
+		<th>{{ 'gift-reggie.terms.date' | t }}</th>
+		<th>Track Shipment</th>
+		
+	
+		
 	</tr>
 	{% for order in orders %}
 		<tr>
 			<td>{{ order.order_name | escape_html }}</td>
-			<td>{{ order.created_datetime | date }}</td>
-			<td>{{ order.name | escape_html }}</td>
-			<td>{{ order.email | escape_html }}</td>
 			<td>{{ order.product_name | escape_html }} x {{ order.product_quantity }}</td>
+		
+			<td>{{ order.created_datetime | date }}</td>
+			<td>Track shipment</td>
+			
+			
+			
 		</tr>
 	{% endfor %}
 </table>
-{% else %}
-<h3 class="giftreggie-no-orders color-berry">{{ 'gift-reggie.manage-registries.no-orders' | t }}</h3>
-{% endif %}
-</div>
-</div>
+			{% else %}
+			<h3 class="giftreggie-no-orders color-berry text-center">{{ 'gift-reggie.manage-registries.no-orders' | t }}</h3>
+			{% endif %}
+		</div>
+	</div>
 </div>
 
 {% include 'proxy_registry_footer' %}
