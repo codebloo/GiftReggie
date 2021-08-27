@@ -14,18 +14,17 @@
 				<div class="{% if image %}col-12 col-lg-9{% else %}col-12 col-lg-8 offset-lg-2{% endif %}">
 					<div class="registry-header-details">
 						<h2 class="registry-title">{% if registrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% endif %}'s{% else %}Your{% endif %} Registry</h2>
-					
-						<div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
-
-						{% if message %}
-							<div class="giftreggie-store-message registry-title-event-message">{{ message | escape_html | newline_to_br }}</div>
-						{% endif %}
-
-						{% if description %}
-							<div class="giftreggie-description registry-title-event-message">
-								{{ description | escape_html | newline_to_br }}
-							</div>
-						{% endif %}
+					 <div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
+					 <div class="giftreggie-description registry-title-event-message">
+                            {% if description %}
+							    {{ description | escape_html | newline_to_br }}
+                            {% else %}
+							    {% include 'registry-default-message' %}
+                            {% endif %}
+						</div>
+						
+                       
+						
 					</div>
 				</div>
 			</div>
