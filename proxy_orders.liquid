@@ -6,57 +6,48 @@
 		margin: 12px 0;
 	}
 </style>
-
-
-
+<section class="track">
 <div class="container">
-	<div class="row">
-		<div class="col-12">
-			<h2 class="text-center h2 color-berry">Track Gifts</h2>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-12">
-			<ul>
-				<li><a href="#">Download thank you list</a></li>
-				<li><a href="#">Refer a friend</a> (what app are you using?)</li>
-			</ul>
-			
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-12">
-			{% if orders.size > 0 %}
-
-			
-				<table class='giftreggie-orders'>
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center color-berry">Track Gifts</h2>
+        </div>
+    </div>
+     <div class="row">
+        <div class="col-12 text-center">
+            <a class="h3 text-center color-berry thankyou-link" href="#">Download 'Thank you list'</a>
+        </div>
+    </div>
+     <div class="row">
+        <div class="col-12">
+            {% if orders.size > 0 %}
+<table class='giftreggie-orders body1'>
 	<tr>
 		<th>{{ 'gift-reggie.terms.order_number' | t }}</th>
 		<th>{{ 'gift-reggie.terms.purchase' | t }}</th>
 		<th>{{ 'gift-reggie.terms.date' | t }}</th>
-		<th>Track Shipment</th>
-		
-	
+		<th>{{ 'gift-reggie.terms.user' | t }}</th>
+		<th>{{ 'gift-reggie.terms.email' | t }}</th>
 		
 	</tr>
 	{% for order in orders %}
 		<tr>
 			<td>{{ order.order_name | escape_html }}</td>
-			<td>{{ order.product_name | escape_html }} x {{ order.product_quantity }}</td>
-		
+			<td><a href="{{ order.product_url}}">{{ order.product_name | escape_html }}</a> x {{ order.product_quantity }}</td>
 			<td>{{ order.created_datetime | date }}</td>
-			<td>Track shipment</td>
-			
-			
+			<td>{{ order.name | escape_html }}</td>
+			<td>{{ order.email | escape_html }}</td>
 			
 		</tr>
 	{% endfor %}
 </table>
-			{% else %}
-			<h3 class="giftreggie-no-orders color-berry text-center">{{ 'gift-reggie.manage-registries.no-orders' | t }}</h3>
-			{% endif %}
-		</div>
-	</div>
+{% else %}
+<p class="giftreggie-no-orders">{{ 'gift-reggie.manage-registries.no-orders' | t }}</p>
+{% endif %}
+        </div>
+    </div>
 </div>
+</section>
+
 
 {% include 'proxy_registry_footer' %}

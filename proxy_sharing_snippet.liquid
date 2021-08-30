@@ -15,7 +15,7 @@
 		<textarea class="giftreggie-share-email-details-to" placeholder="{{ 'gift-reggie.sharing.email_list' | t }}" name='to'></textarea>
 		<input class="giftreggie-share-email-details-subject" type='text' placeholder="Subject" name='subject' value="{{ default_email_share_subject | escape_html }}"/>
 		<textarea class="giftreggie-share-email-details-body" name='body' placeholder="Body">{{ default_email_share_body | escape_html }}</textarea>
-		<button name='action' value='share'>{{ 'gift-reggie.sharing.share_email' | t }}</button>
+		<button name='action' value='share' class="button cta">{{ 'gift-reggie.sharing.share_email' | t }}</button>
 	</form>
 </div>
 {% endif %}
