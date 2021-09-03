@@ -16,6 +16,7 @@
 						<h2 class="registry-title">{% if registrant_first %}{{ registrant_first | escape_html }} {{ registrant_last | escape_html }}{% if coregistrant_first %} & {{ coregistrant_first | escape_html }} {{ coregistrant_last | escape_html }}{% endif %}'s{% else %}Your{% endif %} Registry</h2>
 					 <div class="registry-title-event-date">Wedding Details: {{ event_datetime | date }}</div>
 					 <div class="giftreggie-description registry-title-event-message">{% if description %}{{ description | escape_html | newline_to_br }}{% else %}{% include 'registry-default-message' %}{% endif %}</div>
+					<a href="#editMessage" class="registry-title-edit">Edit Message</a>
 						
                        
 						
@@ -110,7 +111,7 @@
 					</div>
 					<div class="row">
 						<div class="col-12">
-								<div class="dashboard-input-group">
+								<div class="dashboard-input-group" id="editMessage">
 									<label class="dashboard-label">{{ 'gift-reggie.registry-profile.public_message' | t }}</label> 
 								<textarea name='registry-description' class="dashboard-input" maxlength="200" placeholder="Welcome to our registry! We’ve chosen to create our registry on Everlastly, which helps us find products that are better for the environment. Thanks for joining us on this journey.">{% if description %}{{ description | escape_html }}{% else %}{% include 'registry-default-message' %}{% endif %}</textarea>
 							</div>

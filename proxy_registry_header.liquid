@@ -1,10 +1,20 @@
 {% include 'proxy_header' %}
-
+	
+	{% unless is_admin %}
+	<style>
+		header .bottom-header{display:none!important;}
+		
+	</style>
+	
+	
+	{% endunless %}
+	
 <div class="giftreggie-front giftreggie-admin {% if is_admin %}giftreggie-manager{% else %}giftreggie-guest{% endif %} giftreggie-theme-{{ theme.name | handleize }}">
+{% if is_admin %}
 	<div class="giftreggie-header">
 	  
 		
-		{% if is_admin %}
+	
 		<div class="registry-header d-none d-lg-block">
 			<div class="container">
 				<div class="row">
@@ -93,28 +103,17 @@
 					})(jQuery);
 				});
 			</script>
-		{% endif %}
-		{% unless is_admin %}
-		<div class="registry-header">
-			<div class="container">
-				<div class="row">
-					<div class="col-12">
-			<ul id="giftreggie-client-menu" class="registry-nav">
-				{% if guest_can_message %}<li class="registry-nav-link"><a href='{{ proxy_url }}/registry/{{ id }}/message'>{{ 'gift-reggie.terms.message' | t }}</a></li>{% endif %}
-			</ul>
-			</div>
-			</div>
-			</div>
-		</div>
-		{% endunless %}
+		
 	</div>
-	</div>
+
+	{% endif %}
 	
 	
 	
 	<div class="giftreggie-body">
 		<div id='giftreggie-alert' class='giftreggie-alert' style='display:none;'></div>
 		<script type='text/javascript'>
+		
 			window.jqReady.push(function(jQuery) {
 				(function( $ ) {
 					GiftReggie.displayMessage = function(type, message) {
@@ -143,6 +142,10 @@
 					if (vars['message'])
 						GiftReggie.displaySuccess(vars['message']);
 				})(jQuery);
+			});
+			
+			$( document ).ready(function() {
+			     $('<span>Sustainability without Sacrifice</span>').appendTo('.header-slogan');
 			});
 		</script>
 
