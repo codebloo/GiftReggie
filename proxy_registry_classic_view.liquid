@@ -279,116 +279,6 @@ document.write(myTrunc+ " ");
 		            			</fieldset>
 							</div>
 						</div>
-						<div class="collection-filter-drop filter-group color-group">
-										<div class="filter-drop-title filter-title">
-										<i class="fal fa-chevron-down" aria-hidden="true"></i>	
-						                  <span>Color</span>
-				
-										</div>
-				
-										<div class="filter-drop">
-							            <fieldset data-filter-group class="checkbox-group">
-
-						<div class="filter-items">
-							                <div class="checkbox">
-							                    <input type="checkbox" value=".beige"/>
-											    <label class="checkbox-label body1">beige</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".black"/>
-											    <label class="checkbox-label body1">black</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".blue"/>
-											    <label class="checkbox-label body1">blue</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".brown"/>
-											    <label class="checkbox-label body1">brown</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".bronze"/>
-											    <label class="checkbox-label body1">bronze</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".copper"/>
-											    <label class="checkbox-label body1">copper</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".gold"/>
-											    <label class="checkbox-label body1">gold</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".green"/>
-											    <label class="checkbox-label body1">green</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".grey"/>
-											    <label class="checkbox-label body1">grey</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".multicolor"/>
-											    <label class="checkbox-label body1">multicolor</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".orange"/>
-											    <label class="checkbox-label body1">orange</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".pink"/>
-											    <label class="checkbox-label body1">pink</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".purple"/>
-											    <label class="checkbox-label body1">purple</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".red"/>
-											    <label class="checkbox-label body1">red</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".silver"/>
-											    <label class="checkbox-label body1">silver</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".turquoise"/>
-											    <label class="checkbox-label body1">turquoise</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".white"/>
-											    <label class="checkbox-label body1">white</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".yellow"/>
-											    <label class="checkbox-label body1">yellow</label>
-	                   
-							                </div>
-						 <div class="checkbox">
-							                    <input type="checkbox" value=".clear"/>
-											    <label class="checkbox-label body1">clear</label>
-	                   
-							                </div>
-										</div>
-							            </fieldset>
-									</div>
-										</div>
 						<div class="collection-filter-drop filter-group  purchased-group">
 							<div class="filter-drop-title filter-title">
 								<i class="fal fa-chevron-down" aria-hidden="true"></i>	
@@ -443,7 +333,7 @@ document.write(myTrunc+ " ");
 									<input type='hidden' class='product-id' name='product-id' value='{{ product.product_id }}'/>
 								
 		  						  	<div class="image-wrapper">
-										<div class="rating-badge badge-{{shop_product.metafields.ratingvalue.ratingvalue}}">
+										<div class="rating-badge badge-{{shop_product.metafields.rating_level.rating_level}}">
 			   								{% if shop_product.metafields.rating.rating %}
 		  							    		{{shop_product.metafields.rating.rating}}
 		  							     	{% else %}
